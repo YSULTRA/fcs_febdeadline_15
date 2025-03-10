@@ -1,0 +1,206 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Profile</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <style>
+      /* General Reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f172a, #1e40af);
+        color: #fff;
+        animation: fadeIn 1.2s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .container {
+        max-width: 750px; /* Set a fixed width in pixels */
+        width: 90%; /* Or use a percentage for responsive scaling */
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 16px;
+        text-align: center;
+        box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(15px);
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .container:hover {
+        transform: scale(1.02);
+      }
+
+      .profile-pic {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #fff;
+        margin-bottom: 12px;
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .profile-pic:hover {
+        transform: rotate(5deg) scale(1.05);
+      }
+
+      h2 {
+        font-size: 26px;
+        margin-bottom: 12px;
+        color: #facc15;
+        text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.3);
+      }
+
+      .info {
+        text-align: left;
+        margin-top: 15px;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .info p {
+        font-size: 18px;
+        margin: 8px 0;
+        padding: 5px;
+        border-left: 4px solid #facc15;
+        padding-left: 12px;
+        transition: background 0.3s ease-in-out;
+      }
+
+      .info p:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .update-form {
+        margin-top: 20px;
+        text-align: left;
+      }
+
+      .update-form input,
+      .update-form textarea {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        transition: 0.3s;
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        outline: none;
+      }
+
+      .update-form input:focus,
+      .update-form textarea:focus {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.02);
+      }
+
+      .update-form button {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #6366f1, #3b82f6);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+        font-size: 18px;
+        box-shadow: 0px 5px 15px rgba(59, 130, 246, 0.3);
+      }
+
+      .update-form button:hover {
+        background: linear-gradient(135deg, #3b82f6, #1e40af);
+        transform: scale(1.05);
+      }
+
+      .logout-btn {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        margin-top: 15px;
+        box-shadow: 0px 5px 15px rgba(239, 68, 68, 0.3);
+      }
+
+      .logout-btn:hover {
+        background: linear-gradient(135deg, #b91c1c, #7f1d1d);
+        transform: scale(1.05);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img
+        class="profile-pic"
+        src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}"
+        alt="Profile Picture"
+      />
+      <h2>Welcome, {{ user.full_name|default:"User" }}</h2>
+
+      <div class="info">
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Mobile:</strong> {{ user.mobile|default:"Not Set" }}</p>
+        <p><strong>Username:</strong> {{ user.username|default:"Not Set" }}</p>
+        <p><strong>Bio:</strong> {{ user.bio|default:"No bio available" }}</p>
+        <p><strong>Active:</strong> {{ user.is_active|yesno:"Yes,No" }}</p>
+        <p><strong>Admin:</strong> {{ user.is_admin|yesno:"Yes,No" }}</p>
+      </div>
+
+      <h3
+        style="
+          margin-top: 20px;
+          color: #facc15;
+          text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.3);
+        "
+      >
+        Update Profile
+      </h3>
+      <form class="update-form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input
+          type="text"
+          name="full_name"
+          placeholder="Full Name"
+          value="{{ user.full_name }}"
+        />
+        <input
+          type="text"
+          name="mobile"
+          placeholder="Mobile"
+          value="{{ user.mobile }}"
+        />
+        <textarea name="bio" placeholder="Bio">{{ user.bio }}</textarea>
+        <input type="file" name="profile_picture" accept="image/*" />
+        <button type="submit">Update Profile</button>
+      </form>
+
+      {% comment %}
+      <form method="POST" action="{% url 'logout' %}">
+        {% endcomment %} {% csrf_token %}
+        <button type="submit" class="logout-btn">Logout</button>
+      </form>
+    </div>
+  </body>
+</html>
