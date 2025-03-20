@@ -27,9 +27,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 SECRET_KEY = 'django-insecure-nh&bk1uzg)2qj7h^#^&ewv)feka(c85c=q+y75_eritcjm#q97'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = [*]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "*"]
 
 # AUTH_USER_MODEL = "users.CustomUser
 
@@ -83,7 +83,7 @@ CORS_ALLOW_METHODS = [
 
 
 # Ensure that requests are only served over HTTPS
-SECURE_SSL_REDIRECT = True  # Redirect HTTP to HTTPS
+SECURE_SSL_REDIRECT = False  # Redirect HTTP to HTTPS
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Required if behind a proxy/load balancer
 
 # Enable HTTPS cookies
