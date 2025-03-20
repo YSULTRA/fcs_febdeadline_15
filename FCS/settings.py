@@ -12,6 +12,26 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from cryptography.fernet import Fernet
+import base64
+from dotenv import load_dotenv
+
+# Load .env file (if exists)
+load_dotenv()
+
+ENCRYPTION_KEY_ENV_VAR = "ENCRYPTION_KEY"
+
+# Check if ENCRYPTION_KEY is already set
+if os.getenv(ENCRYPTION_KEY_ENV_VAR):
+    ENCRYPTION_KEY = os.getenv(ENCRYPTION_KEY_ENV_VAR)
+else:
+    # Generate and store a new ENCRYPTION_KEY only if it doesn't exist
+    ENCRYPTION_KEY = base64.urlsafe_b64encode(os.urandom(32)).decode()
+    with open(".env", "a") as env_file:
+        env_file.write(f"\n{ENCRYPTION_KEY_ENV_VAR}={ENCRYPTION_KEY}")
+    os.environ[ENCRYPTION_KEY_ENV_VAR] = ENCRYPTION_KEY
+
+print(f"Using ENCRYPTION_KEY: {ENCRYPTION_KEY}")  # Debugging, remove later
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,9 +47,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 SECRET_KEY = 'django-insecure-nh&bk1uzg)2qj7h^#^&ewv)feka(c85c=q+y75_eritcjm#q97'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "*"]
+ALLOWED_HOSTS = []
 
 # AUTH_USER_MODEL = "users.CustomUser
 
@@ -47,8 +67,22 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework',
     'rest_framework_simplejwt',
-    'corsheaders'
+    'corsheaders',
+    'channels',
+
+    # 'django.contrib.sites'
+
 ]
+
+
+
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',  # Use Redis in production
+    },
+}
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
@@ -60,12 +94,16 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 api="431377ea50msh00ad7558b08f779p16252bjsna588b43f9005"
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication',  # Use Token-based auth
+        # 'rest_framework.authentication.SessionAuthentication',  # Keep Session-based auth
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
     ],
 }
+
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",  # Default Django auth
 ]
@@ -84,16 +122,18 @@ CORS_ALLOW_METHODS = [
 
 # Ensure that requests are only served over HTTPS
 SECURE_SSL_REDIRECT = False  # Redirect HTTP to HTTPS
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Required if behind a proxy/load balancer
+SECURE_PROXY_SSL_HEADER = None  # Required if behind a proxy/load balancer
 
 # Enable HTTPS cookies
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_NAME = "sessionid_custom"
+SESSION_COOKIE_SECURE = False
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # Use strong security headers
-SECURE_HSTS_SECONDS = 31536000  # Enable HTTP Strict Transport Security (HSTS)
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+SECURE_HSTS_SECONDS = 0  # Enable HTTP Strict Transport Security (HSTS)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
 
 
 
@@ -112,6 +152,23 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',  # Keep this for security
+    'corsheaders.middleware.CorsMiddleware',
+]
+
+
+
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # React frontend
+    "http://127.0.0.1:8000",  # Django backend
+]
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:8000",
 ]
 
 ROOT_URLCONF = 'FCS.urls'
@@ -133,6 +190,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'FCS.wsgi.application'
+ASGI_APPLICATION = 'FCS.asgi.application'
 
 
 # Database

@@ -6,6 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User Profile</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
     <style>
       /* General Reset */
       * {
@@ -37,10 +46,10 @@
       }
 
       .container {
-        max-width: 750px; /* Set a fixed width in pixels */
-        width: 90%; /* Or use a percentage for responsive scaling */
+        max-width: 750px;
+        width: 90%;
         background: rgba(255, 255, 255, 0.1);
-        padding: 15px;
+        padding: 25px;
         border-radius: 16px;
         text-align: center;
         box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.3);
@@ -50,6 +59,11 @@
 
       .container:hover {
         transform: scale(1.02);
+      }
+
+      .profile-pic-container {
+        position: relative;
+        display: inline-block;
       }
 
       .profile-pic {
@@ -64,6 +78,26 @@
 
       .profile-pic:hover {
         transform: rotate(5deg) scale(1.05);
+      }
+
+      .edit-profile-pic {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 50%;
+        padding: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease-in-out;
+      }
+
+      .edit-profile-pic:hover {
+        background: rgba(0, 0, 0, 0.8);
+      }
+
+      .edit-profile-pic i {
+        color: #fff;
+        font-size: 16px;
       }
 
       h2 {
@@ -95,9 +129,28 @@
         background: rgba(255, 255, 255, 0.15);
       }
 
+      .edit-icon {
+        cursor: pointer;
+        margin-left: 10px;
+        color: #facc15;
+        transition: color 0.3s ease-in-out;
+      }
+
+      .edit-icon:hover {
+        color: #fff;
+      }
+
       .update-form {
-        margin-top: 20px;
-        text-align: left;
+        margin-top: 10px;
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height 0.5s ease-in-out, opacity 0.3s ease-in-out;
+        opacity: 0;
+      }
+
+      .update-form.visible {
+        max-height: 500px; /* Adjust based on form height */
+        opacity: 1;
       }
 
       .update-form input,
@@ -152,55 +205,112 @@
   </head>
   <body>
     <div class="container">
-      <img
-        class="profile-pic"
-        src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}"
-        alt="Profile Picture"
-      />
+      <div class="profile-pic-container">
+        <img
+          class="profile-pic"
+          src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}https://e7.pngegg.com/pngimages/798/436/png-clipart-computer-icons-user-profile-avatar-profile-heroes-black.png{% endif %}"
+          alt="Profile Picture"
+        />
+        <div class="edit-profile-pic" onclick="toggleEdit('profile-picture')">
+          <i class="fas fa-edit"></i>
+        </div>
+      </div>
       <h2>Welcome, {{ user.full_name|default:"User" }}</h2>
+      <a href="{% url 'chat_view' %}" class="btn btn-primary">Go to Chat</a>
 
       <div class="info">
         <p><strong>Email:</strong> {{ user.email }}</p>
         <p><strong>Mobile:</strong> {{ user.mobile|default:"Not Set" }}</p>
-        <p><strong>Username:</strong> {{ user.username|default:"Not Set" }}</p>
-        <p><strong>Bio:</strong> {{ user.bio|default:"No bio available" }}</p>
-        <p><strong>Active:</strong> {{ user.is_active|yesno:"Yes,No" }}</p>
-        <p><strong>Admin:</strong> {{ user.is_admin|yesno:"Yes,No" }}</p>
+        <p>
+          <strong>Username:</strong> {{ user.username|default:"Not Set" }}
+          <i class="fas fa-edit edit-icon" onclick="toggleEdit('username')"></i>
+        </p>
+        <p>
+          <strong>Bio:</strong> {{ user.bio|default:"No bio available" }}
+          <i class="fas fa-edit edit-icon" onclick="toggleEdit('bio')"></i>
+        </p>
       </div>
 
-      <h3
-        style="
-          margin-top: 20px;
-          color: #facc15;
-          text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.3);
-        "
+      <!-- Single Update Form for All Fields -->
+      <form
+        class="update-form"
+        id="update-form"
+        method="POST"
+        enctype="multipart/form-data"
       >
-        Update Profile
-      </h3>
-      <form class="update-form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <input
-          type="text"
-          name="full_name"
-          placeholder="Full Name"
-          value="{{ user.full_name }}"
-        />
-        <input
-          type="text"
-          name="mobile"
-          placeholder="Mobile"
-          value="{{ user.mobile }}"
-        />
-        <textarea name="bio" placeholder="Bio">{{ user.bio }}</textarea>
-        <input type="file" name="profile_picture" accept="image/*" />
+        <div id="username-fields" class="hidden">
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            value="{{ user.username }}"
+          />
+        </div>
+        <div id="bio-fields" class="hidden">
+          <textarea name="bio" placeholder="Bio">{{ user.bio }}</textarea>
+        </div>
+        <div id="profile-picture-fields" class="hidden">
+          <input type="file" name="profile_picture" accept="image/*" />
+        </div>
         <button type="submit">Update Profile</button>
       </form>
 
-      {% comment %}
       <form method="POST" action="{% url 'logout' %}">
-        {% endcomment %} {% csrf_token %}
+        {% csrf_token %}
         <button type="submit" class="logout-btn">Logout</button>
       </form>
     </div>
+    <script>
+      async function logout() {
+        const response = await fetch("/logout/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}", // Include CSRF token for Django
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Redirect to the register page
+          window.location.href = data.redirect_url;
+        } else {
+          alert(data.error || "Logout failed");
+        }
+      }
+    </script>
+
+    <script>
+      function toggleEdit(field) {
+        // Hide all fields first
+        document.getElementById("username-fields").classList.add("hidden");
+        document.getElementById("bio-fields").classList.add("hidden");
+        document
+          .getElementById("profile-picture-fields")
+          .classList.add("hidden");
+
+        // Show the selected field
+        document.getElementById(`${field}-fields`).classList.remove("hidden");
+
+        // Show the form
+        document.getElementById("update-form").classList.add("visible");
+      }
+    </script>
+
+    <script>
+      // Check for Django messages and display SweetAlert2 notifications
+      {% if messages %}
+        {% for message in messages %}
+          Swal.fire({
+            icon: "{{ message.tags }}",  // Success, error, warning, etc.
+            title: "{{ message }}",      // Message content
+            showConfirmButton: false,
+            timer: 3000,                 // Auto-close after 3 seconds
+          });
+        {% endfor %}
+      {% endif %}
+    </script>
   </body>
 </html>

@@ -25,6 +25,20 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/users/", include("users.urls")),  # Ensure this matches BASE_URL in script.js
     path('', home, name='home'),
+    path('logout/', UserLogoutView.as_view(), name='logout'),
     path("profile/", profile_view, name="user-profile"),
     path("profile/data/", get_user_profile, name="profile-data"),  # Fix URL pattern for profile update
+    path('search-users/', search_users, name='search-users'),
+    path("users/", include("users.urls")),
+    path("users/get-current-user/", get_current_user, name="get_current_user"),
+    path("search-users/", search_users, name="search_users"),
+    
+    path("api/chat/messages/", get_messages, name="get_messages"),
+    path("api/chat/send-message/", send_message, name="send_message"),
+    path('api/chat/messages/<str:email>/', get_messages, name='get_messages'),  # Add this line
+    path("search-users/", search_users, name="search_users"),
+    path("chat/", chat_view, name="chat_view"),
+    path("send-message/", send_message, name="send_message"),
+    path("get-messages/", get_messages, name="get_messages"),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

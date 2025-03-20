@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User Authentication</title>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <style>
       /* General Reset */
@@ -130,6 +130,12 @@
         <form id="register-form">
           <input type="email" id="reg-email" placeholder="Email" required />
           <input type="text" id="reg-mobile" placeholder="Mobile" required />
+          <input
+            type="text"
+            id="reg-fullname"
+            placeholder="Full Name"
+            required
+          />
           <input
             type="password"
             id="reg-password"
@@ -259,8 +265,11 @@
           const email = document.getElementById("reg-email").value.trim();
           const mobile = document.getElementById("reg-mobile").value.trim();
           const password = document.getElementById("reg-password").value.trim();
+          const full_name = document
+            .getElementById("reg-fullname")
+            .value.trim();
 
-          if (!email || !mobile || !password) {
+          if (!email || !mobile || !password || !full_name) {
             alert("Please fill in all required fields.");
             return;
           }
@@ -269,6 +278,7 @@
             email,
             mobile,
             password,
+            full_name, // Ensure full_name is included in the request
           });
 
           if (data) {
@@ -326,6 +336,19 @@
             window.location.href = "/profile/";
           }
         });
+    </script>
+    <script>
+      // Check for Django messages and display SweetAlert2 notifications
+      {% if messages %}
+        {% for message in messages %}
+          Swal.fire({
+            icon: "{{ message.tags }}",  // Success, error, warning, etc.
+            title: "{{ message }}",      // Message content
+            showConfirmButton: false,
+            timer: 3000,                 // Auto-close after 3 seconds
+          });
+        {% endfor %}
+      {% endif %}
     </script>
   </body>
 </html>

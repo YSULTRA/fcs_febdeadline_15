@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Application</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        height: 100vh;
+        margin: 0;
+        background: var(--background-color);
+        color: var(--text-color);
+      }
+
+      /* Dark and Light Theme Variables */
+      :root {
+        --background-color: #fafafa;
+        --text-color: #333;
+        --sidebar-background: #fff;
+        --sidebar-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        --user-list-hover: #f5f5f5;
+        --chat-header-background: #fff;
+        --chat-header-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        --message-sent-background: #0099ff;
+        --message-received-background: #fff;
+        --message-received-border: #ddd;
+        --chat-input-background: #fff;
+        --chat-input-border: #ddd;
+        --selected-user-background: #e0f7fa;
+      }
+
+      body.dark-theme {
+        --background-color: #121212;
+        --text-color: #e0e0e0;
+        --sidebar-background: #1e1e1e;
+        --sidebar-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+        --user-list-hover: #333;
+        --chat-header-background: #1e1e1e;
+        --chat-header-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        --message-sent-background: #007acc;
+        --message-received-background: #333;
+        --message-received-border: #444;
+        --chat-input-background: #1e1e1e;
+        --chat-input-border: #444;
+        --selected-user-background: #004d40;
+      }
+
+      /* Sidebar styling */
+      .sidebar {
+        width: 25%;
+        background: var(--sidebar-background);
+        overflow-y: auto;
+        padding: 15px;
+        border-right: 1px solid var(--chat-input-border);
+        box-shadow: var(--sidebar-shadow);
+      }
+      .sidebar h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: var(--text-color);
+      }
+      .search-bar {
+        width: 90%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid var(--chat-input-border);
+        border-radius: 25px;
+        outline: none;
+        font-size: 16px;
+        background: var(--sidebar-background);
+        color: var(--text-color);
+      }
+      .user-list {
+        list-style: none;
+        padding: 0;
+      }
+      .user-list li {
+        padding: 10px;
+        cursor: pointer;
+        border-bottom: 1px solid var(--chat-input-border);
+        display: flex;
+        align-items: center;
+        transition: background 0.3s ease;
+      }
+      .user-list li:hover {
+        background: var(--user-list-hover);
+      }
+      .user-list li.selected {
+        background: var(--selected-user-background);
+      }
+      .user-list li img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+      }
+      .user-list li span {
+        font-size: 16px;
+        color: var(--text-color);
+      }
+      .user-list li .unread-indicator {
+        width: 10px;
+        height: 10px;
+        background: #ff5722;
+        border-radius: 50%;
+        margin-left: auto;
+        display: none;
+      }
+      .user-list li.has-unread .unread-indicator {
+        display: block;
+      }
+
+      /* Chat Window Styling */
+      .chat-window {
+        width: 75%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background: var(--sidebar-background);
+      }
+      .chat-header {
+        font-size: 20px;
+        font-weight: bold;
+        padding: 15px;
+        background: var(--chat-header-background);
+        color: var(--text-color);
+        text-align: center;
+        border-bottom: 1px solid var(--chat-input-border);
+        box-shadow: var(--chat-header-shadow);
+      }
+      .messages {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 20px;
+        background: var(--background-color);
+      }
+      .message {
+        padding: 10px 15px;
+        margin: 10px 0;
+        border-radius: 15px;
+        max-width: 60%;
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        animation: fadeIn 0.3s ease;
+      }
+      .message.sent {
+        background: var(--message-sent-background);
+        color: white;
+        margin-left: auto;
+      }
+      .message.received {
+        background: var(--message-received-background);
+        color: var(--text-color);
+        margin-right: auto;
+        border: 1px solid var(--message-received-border);
+      }
+      .message .timestamp {
+        font-size: 12px;
+        color: #777;
+        margin-left: 10px;
+        white-space: nowrap;
+      }
+      .message .avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+      }
+      .message .status-indicator {
+        font-size: 12px;
+        color: #777;
+        margin-left: 10px;
+      }
+      .message.sent .status-indicator {
+        color: #4caf50;
+      }
+
+      /* Message Input Box */
+      .chat-input {
+        padding: 15px;
+        background: var(--chat-input-background);
+        border-top: 1px solid var(--chat-input-border);
+      }
+      .chat-input input {
+        flex-grow: 1;
+        padding: 10px;
+        border: 1px solid var(--chat-input-border);
+        border-radius: 25px;
+        outline: none;
+        font-size: 16px;
+        background: var(--sidebar-background);
+        color: var(--text-color);
+      }
+      .chat-input button {
+        padding: 10px 20px;
+        margin-left: 10px;
+        border: none;
+        background: var(--message-sent-background);
+        color: white;
+        cursor: pointer;
+        border-radius: 25px;
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
+      .chat-input button:hover {
+        background: #007acc;
+        transform: scale(1.05);
+      }
+
+      /* Theme Toggle Button */
+      .theme-toggle {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        border: none;
+        background: var(--message-sent-background);
+        color: white;
+        cursor: pointer;
+        border-radius: 25px;
+        transition: background 0.3s ease;
+      }
+      .theme-toggle:hover {
+        background: #007acc;
+      }
+      .input-container {
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+        background: var(--sidebar-background);
+        border-radius: 25px;
+        padding: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      /* Theme Toggle Button */
+      .theme-toggle {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        padding: 10px;
+        border: none;
+        background: var(--message-sent-background);
+        color: white;
+        cursor: pointer;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s ease;
+        z-index: 1000; /* Ensure it's above other elements */
+      }
+
+      .theme-toggle:hover {
+        background: var(--message-sent-hover);
+      }
+
+      .theme-toggle svg {
+        fill: white;
+      }
+
+      textarea {
+        flex-grow: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 20px;
+        outline: none;
+        font-size: 16px;
+        background: transparent;
+        color: var(--text-color);
+        resize: none;
+        overflow-y: hidden;
+        max-height: 150px; /* Limit maximum height */
+      }
+      textarea::placeholder {
+        color: #999;
+      }
+
+      .send-button {
+        padding: 10px;
+        border: none;
+        background: var(--message-sent-background);
+        color: white;
+        cursor: pointer;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
+
+      .send-button:hover {
+        background: var(--message-sent-hover);
+        transform: scale(1.1);
+      }
+
+      .send-button svg {
+        fill: white;
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+    <script>
+      // Auto-resize textarea
+      function autoResize(textarea) {
+        textarea.style.height = "auto";
+        textarea.style.height = textarea.scrollHeight + "px";
+      }
+
+      let selectedUser = null;
+      let lastSelectedUser = null; // Track the last selected user
+      let lastMessageTimestamp = null; // Track the timestamp of the last fetched message
+      const senderEmail = "{{ sender.email }}"; // Sender's email from the template context
+
+      // Fetch messages from the server
+      async function fetchMessages() {
+        if (!selectedUser) return;
+
+        try {
+          let response = await fetch(
+            `/get-messages/?sender=${senderEmail}&receiver=${selectedUser}`
+          );
+          if (!response.ok) throw new Error("Failed to fetch messages");
+
+          let data = await response.json();
+          let messagesDiv = document.getElementById("messages");
+
+          // Check if the selected user has changed
+          if (selectedUser !== lastSelectedUser) {
+            messagesDiv.innerHTML = ""; // Clear messages only if the user has changed
+            lastSelectedUser = selectedUser; // Update the last selected user
+            lastMessageTimestamp = null; // Reset the last message timestamp
+          }
+
+          // Filter out messages that are older than the last fetched message
+          let newMessages = data.messages;
+          if (lastMessageTimestamp) {
+            newMessages = data.messages.filter(
+              (msg) => new Date(msg.timestamp) > new Date(lastMessageTimestamp)
+            );
+          }
+
+          // Append only new messages
+          newMessages.forEach((msg) => {
+            let messageDiv = document.createElement("div");
+            messageDiv.classList.add("message");
+            messageDiv.classList.add(
+              msg.sender === senderEmail ? "sent" : "received"
+            );
+
+            // Add avatar
+            let avatar = document.createElement("img");
+            avatar.src =
+              msg.sender === senderEmail
+                ? "{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}https://e7.pngegg.com/pngimages/798/436/png-clipart-computer-icons-user-profile-avatar-profile-heroes-black.png{% endif %}"
+                : "{% if receiver and receiver.profile_picture %}{{ receiver.profile_picture.url }}{% else %}https://e7.pngegg.com/pngimages/798/436/png-clipart-computer-icons-user-profile-avatar-profile-heroes-black.png{% endif %}";
+            avatar.classList.add("avatar");
+            messageDiv.appendChild(avatar);
+
+            // Add message text
+            let text = document.createElement("span");
+            text.innerText = msg.text;
+            messageDiv.appendChild(text);
+
+            // Add timestamp
+            let timestamp = document.createElement("span");
+            timestamp.classList.add("timestamp");
+            timestamp.innerText = new Date(msg.timestamp).toLocaleTimeString();
+            messageDiv.appendChild(timestamp);
+
+            // Add status indicator for sent messages
+            if (msg.sender === senderEmail) {
+              let statusIndicator = document.createElement("span");
+              statusIndicator.classList.add("status-indicator");
+              statusIndicator.innerText = "✓";
+              messageDiv.appendChild(statusIndicator);
+            }
+
+            // Append the message to the chat window
+            messagesDiv.appendChild(messageDiv);
+
+            // Animate only new messages
+            if (newMessages.length > 0) {
+              messageDiv.style.animation = "fadeIn 0.3s ease";
+            }
+          });
+
+          // Update the last message timestamp
+          if (newMessages.length > 0) {
+            lastMessageTimestamp =
+              newMessages[newMessages.length - 1].timestamp;
+          }
+
+          // Auto-scroll to the bottom
+          messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        } catch (error) {
+          console.error("Error fetching messages:", error);
+        }
+      }
+
+      // Select a user to chat with
+      function selectUser(email, name) {
+        selectedUser = email;
+        document.getElementById("chat-header").innerText = `Chat with ${name}`;
+        document.getElementById("receiverInput").value = selectedUser; // Set the receiver value
+
+        // Remove selected class from all users
+        document.querySelectorAll(".user-list li").forEach((li) => {
+          li.classList.remove("selected");
+        });
+
+        // Add selected class to the clicked user
+        event.currentTarget.classList.add("selected");
+
+        fetchMessages(); // Fetch messages for the selected user
+      }
+
+      // Send a message
+      async function sendMessage(event) {
+        event.preventDefault();
+
+        let text = document.getElementById("messageInput").value.trim();
+        if (!text || !selectedUser) return;
+
+        try {
+          let response = await fetch("/send-message/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify({
+              sender: senderEmail,
+              receiver: selectedUser,
+              text: text,
+            }),
+          });
+
+          if (response.ok) {
+            document.getElementById("messageInput").value = "";
+            fetchMessages(); // Refresh chat
+          } else {
+            console.error("Error sending message:", await response.json());
+          }
+        } catch (error) {
+          console.error("Network error:", error);
+        }
+      }
+
+      function getCSRFToken() {
+        return document.querySelector("[name=csrfmiddlewaretoken]").value;
+      }
+
+      // Auto-refresh messages every 3 seconds
+      setInterval(fetchMessages, 3000);
+
+      // Filter users based on search input
+      function filterUsers() {
+        const searchTerm = document
+          .getElementById("search-bar")
+          .value.toLowerCase();
+        const userList = document.getElementById("user-list").children;
+
+        Array.from(userList).forEach((user) => {
+          const userName = user.querySelector("span").textContent.toLowerCase();
+          if (userName.includes(searchTerm)) {
+            user.style.display = "flex";
+          } else {
+            user.style.display = "none";
+          }
+        });
+      }
+
+      // Toggle between dark and light theme
+      function toggleTheme() {
+        document.body.classList.toggle("dark-theme");
+      }
+    </script>
+  </head>
+  <body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        width="24"
+        height="24"
+      >
+        <path
+          fill="currentColor"
+          d="M12 18a6 6 0 110-12 6 6 0 010 12zm0-2a4 4 0 100-8 4 4 0 000 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121z"
+        />
+      </svg>
+    </button>
+
+    <!-- Sidebar for User List -->
+    <div class="sidebar">
+      <h2>Chats</h2>
+      <input
+        type="text"
+        id="search-bar"
+        class="search-bar"
+        placeholder="Search by username, email, or name..."
+        oninput="filterUsers()"
+      />
+      <ul id="user-list" class="user-list">
+        {% for user in users %}
+        <li onclick="selectUser('{{ user.email }}', '{{ user.full_name }}')">
+          <img
+            src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}https://e7.pngegg.com/pngimages/798/436/png-clipart-computer-icons-user-profile-avatar-profile-heroes-black.png{% endif %}"
+            alt="Avatar"
+            class="avatar"
+          />
+          <span>{{ user.full_name }}</span>
+          <div class="unread-indicator"></div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- Chat Window -->
+    <div class="chat-window">
+      <div id="chat-header" class="chat-header">Select a user to chat</div>
+      <div id="messages" class="messages">
+        <!-- Messages will be dynamically inserted here -->
+      </div>
+      <div class="chat-input">
+        <form onsubmit="sendMessage(event)">
+          {% csrf_token %}
+          <input type="hidden" name="sender" value="{{ sender.email }}" />
+          <input type="hidden" name="receiver" id="receiverInput" value="" />
+          <div class="input-container">
+            <textarea
+              id="messageInput"
+              name="text"
+              placeholder="Type a message..."
+              rows="1"
+              oninput="autoResize(this)"
+            ></textarea>
+            <button type="submit" class="send-button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+              >
+                <path
+                  fill="currentColor"
+                  d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"
+                />
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
