@@ -44,12 +44,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-nh&bk1uzg)2qj7h^#^&ewv)feka(c85c=q+y75_eritcjm#q97'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "fallback-secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # AUTH_USER_MODEL = "users.CustomUser
 
@@ -88,8 +88,9 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "yash22589@iiitd.ac.in"  # Replace with your email
-EMAIL_HOST_PASSWORD = "flvg npis otas shva"  # Use an App Password
+
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
@@ -125,11 +126,12 @@ SECURE_SSL_REDIRECT = False  # Redirect HTTP to HTTPS
 SECURE_PROXY_SSL_HEADER = None  # Required if behind a proxy/load balancer
 
 # Enable HTTPS cookies
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_NAME = "sessionid_custom"
 SESSION_COOKIE_SECURE = False
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 1209600  # 2 weeks (in seconds)
 # Use strong security headers
 SECURE_HSTS_SECONDS = 0  # Enable HTTP Strict Transport Security (HSTS)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = False
@@ -160,16 +162,16 @@ MIDDLEWARE = [
 
 
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React frontend
-    "http://127.0.0.1:8000",  # Django backend
-]
+#CORS_ALLOWED_ORIGINS = [
+#    "http://localhost:3000",  # React frontend
+#    "http://127.0.0.1:8000",  # Django backend
+#]
 
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:8000",
-]
+#CSRF_TRUSTED_ORIGINS = [
+#    "http://localhost:3000",
+#    "http://127.0.0.1:8000",
+#]
 
 ROOT_URLCONF = 'FCS.urls'
 

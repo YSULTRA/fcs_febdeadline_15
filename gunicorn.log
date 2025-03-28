@@ -3,3 +3,51 @@ nohup: ignoring input
 [2025-03-18 18:41:45 +0000] [111767] [INFO] Listening at: http://127.0.0.1:8000 (111767)
 [2025-03-18 18:41:45 +0000] [111767] [INFO] Using worker: sync
 [2025-03-18 18:41:45 +0000] [111768] [INFO] Booting worker with pid: 111768
+[2025-03-20 09:10:34 +0000] [111768] [INFO] Worker exiting (pid: 111768)
+[2025-03-20 09:10:34 +0000] [111767] [INFO] Handling signal: term
+Received Data: {'email': 'singh.yash152004@gmail.com', 'mobile': '9266137288', 'password': '9811YASH'}
+📨 Sending OTP to 9266137288@txt.att.net...
+✅ OTP sent successfully to 9266137288@txt.att.net
+Received Data: {'email': 'singh.yash152004@gmail.com', 'mobile': '9266137288', 'password': '9811YASH'}
+Received Data: {'email': 'singh.yash152004@gmail.com', 'mobile': '9266137288', 'password': '9811YASH'}
+Received Data: {'email': 'singh.yash152004@gmail.com', 'mobile': '9266137288', 'password': '9811YASH'}
+Received Data: {'email': 'singh.yash152004@gmail.com', 'mobile': '9266137288', 'password': '9811YASH'}
+Received Data: {'email': 'singh.yash152004@gmail.com', 'mobile': '9266137288', 'password': '9811YASH'}
+📨 Sending OTP to 9266137288@txt.att.net...
+✅ OTP sent successfully to 9266137288@txt.att.net
+User found: singh.yash152004@gmail.com (Type: <class 'users.models.CustomUser'>)
+User Email: singh.yash152004@gmail.com
+User Email: singh.yash152004@gmail.com
+Received Data: {'email': 'eyegeg@yrhd', 'mobile': '3636374774', 'password': 'dgdhdgd'}
+Serializer Errors: {'email': [ErrorDetail(string='Enter a valid email address.', code='invalid')]}
+Received Data: {'email': 'eyegeg@yrhd.com', 'mobile': '3636374774', 'password': 'dgdhdgd'}
+📨 Sending OTP to 3636374774@txt.att.net...
+✅ OTP sent successfully to 3636374774@txt.att.net
+Received Data: {'email': 'eyegeg@yrhd.com', 'mobile': '3636374774', 'password': 'dgdhdgd'}
+Received Data: {'email': 'eyegeg@yrhd.com', 'mobile': '3636374774', 'password': 'dgdhdgd'}
+Received Data: {'email': 'eyegeg@yrhd.com', 'mobile': '3636374774', 'password': 'dgdhdgd'}
+Received Data: {'email': 'eyegeg@yrhd.com', 'mobile': '3636374774', 'password': 'dgdhdgd'}
+Received Data: {'email': 'eyegeg@yrhd.com', 'mobile': '3636374774', 'password': 'dgdhdgd'}
+Received Data: {'email': 'eyegeg@yrhd.com', 'mobile': '3636374774', 'password': 'dgdhdgd'}
+Received Data: {'email': 'eyegeg@yrhd.com', 'mobile': '3636374774', 'password': 'dgdhdgd'}
+Received Data: {'email': 'eyegeg@yrhd.com', 'mobile': '3636374774', 'password': 'dgdhdgd'}
+Received Data: {'email': 'eyegeg@yrhd.com', 'mobile': '3636374774', 'password': 'dgdhdgd'}
+Received Data: {'email': 'eyegeg@yrhd.com', 'mobile': '3636374774', 'password': 'dgdhdgd'}
+Received Data: {'email': 'eyegeg@yrhd.com', 'mobile': '3636374774', 'password': 'dgdhdgd'}
+Received Data: {'email': 'eyegeg@yrhd.com', 'mobile': '3636374774', 'password': 'dgdhdgd'}
+Received Data: {'email': 'eyegeg@yrhd.com', 'mobile': '3636374774', 'password': 'dgdhdgd'}
+User found: singh.yash152004@gmail.com (Type: <class 'users.models.CustomUser'>)
+User found: singh.yash152004@gmail.com (Type: <class 'users.models.CustomUser'>)
+Received Data: {'email': 'wasif@gmail.com', 'mobile': '9266137288', 'password': 'wasif'}
+User found: singh.yash152004@gmail.com (Type: <class 'users.models.CustomUser'>)
+User found: singh.yash152004@gmail.com (Type: <class 'users.models.CustomUser'>)
+User found: singh.yash152004@gmail.com (Type: <class 'users.models.CustomUser'>)
+User found: singh.yash152004@gmail.com (Type: <class 'users.models.CustomUser'>)
+User Email: singh.yash152004@gmail.com
+User Email: singh.yash152004@gmail.com
+User Email: singh.yash152004@gmail.com
+User found: singh.yash152004@gmail.com (Type: <class 'users.models.CustomUser'>)
+User Email: singh.yash152004@gmail.com
+User Email: singh.yash152004@gmail.com
+User Email: singh.yash152004@gmail.com
+[2025-03-20 09:10:34 +0000] [111767] [INFO] Shutting down: Master

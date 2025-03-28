@@ -1,0 +1,7 @@
+nohup: ignoring input
+Watching for file changes with StatReloader
+[21/Mar/2025 18:31:02] "GET / HTTP/1.1" 200 9741
+[21/Mar/2025 18:47:20] "GET / HTTP/1.1" 200 9741
+[21/Mar/2025 18:47:38] "GET / HTTP/1.1" 200 9741
+[21/Mar/2025 18:47:42] code 400, message Bad request version ('z=4"ä±\x00>\x13\x02\x13\x03\x13\x01À,À0\x00\x9fÌ©Ì¨ÌªÀ+À/\x00\x9eÀ$À(\x00kÀ#À\'\x00gÀ')
+[21/Mar/2025 18:47:42] You're accessing the development server over HTTPS, but it only supports HTTP.
