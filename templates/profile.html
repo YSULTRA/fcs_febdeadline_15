@@ -16,14 +16,21 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
     <style>
-      /* General Reset */
+      .product-image {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+        background: #eee; /* Placeholder color if no image */
+        margin-bottom: 10px;
+      }
+      /* Global Styles */
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
         font-family: "Poppins", sans-serif;
       }
-
       body {
         display: flex;
         align-items: center;
@@ -33,7 +40,6 @@
         color: #fff;
         animation: fadeIn 1.2s ease-in-out;
       }
-
       @keyframes fadeIn {
         from {
           opacity: 0;
@@ -44,7 +50,6 @@
           transform: translateY(0);
         }
       }
-
       .container {
         max-width: 750px;
         width: 90%;
@@ -56,16 +61,15 @@
         backdrop-filter: blur(15px);
         transition: transform 0.3s ease-in-out;
       }
-
       .container:hover {
         transform: scale(1.02);
       }
 
+      /* Profile Picture */
       .profile-pic-container {
         position: relative;
         display: inline-block;
       }
-
       .profile-pic {
         width: 130px;
         height: 130px;
@@ -75,11 +79,9 @@
         margin-bottom: 12px;
         transition: transform 0.3s ease-in-out;
       }
-
       .profile-pic:hover {
         transform: rotate(5deg) scale(1.05);
       }
-
       .edit-profile-pic {
         position: absolute;
         bottom: 10px;
@@ -90,23 +92,21 @@
         cursor: pointer;
         transition: background 0.3s ease-in-out;
       }
-
       .edit-profile-pic:hover {
         background: rgba(0, 0, 0, 0.8);
       }
-
       .edit-profile-pic i {
         color: #fff;
         font-size: 16px;
       }
 
+      /* Headings and Info */
       h2 {
         font-size: 26px;
         margin-bottom: 12px;
         color: #facc15;
         text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.3);
       }
-
       .info {
         text-align: left;
         margin-top: 15px;
@@ -115,7 +115,6 @@
         border-radius: 12px;
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
       }
-
       .info p {
         font-size: 18px;
         margin: 8px 0;
@@ -124,37 +123,162 @@
         padding-left: 12px;
         transition: background 0.3s ease-in-out;
       }
-
       .info p:hover {
         background: rgba(255, 255, 255, 0.15);
       }
-
       .edit-icon {
         cursor: pointer;
         margin-left: 10px;
         color: #facc15;
         transition: color 0.3s ease-in-out;
       }
-
       .edit-icon:hover {
         color: #fff;
       }
 
-      .update-form {
+      /* Wallet Section */
+      .wallet-section,
+      .products-section {
+        margin-top: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+      }
+      .wallet-section p,
+      .products-section h3 {
+        font-size: 18px;
+        margin: 8px 0;
+        padding: 5px;
+        border-left: 4px solid #facc15;
+        padding-left: 12px;
+      }
+      .wallet-section input {
+        width: 100px;
+        padding: 8px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+      }
+      .wallet-section button {
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .wallet-section button:hover {
+        background: linear-gradient(135deg, #059669, #047857);
+        transform: scale(1.05);
+      }
+
+      /* Products Section */
+      .products-section h3 {
+        font-size: 20px;
+        margin-bottom: 15px;
+        color: #facc15;
+        text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.2);
+      }
+      .product-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+      }
+      .product-card {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 15px;
+        border-radius: 12px;
+        width: 250px; /* Increased width to fit content */
+        text-align: left;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease-in-out;
+        word-wrap: break-word; /* Ensures long text wraps */
+        overflow: hidden; /* Prevents overflow */
+      }
+      .product-card:hover {
+        transform: scale(1.05);
+      }
+      .product-card h4 {
+        font-size: 16px;
+        margin-bottom: 8px;
+        color: #fff;
+      }
+      .product-card .price {
+        font-size: 18px;
+        font-weight: bold;
+        color: #facc15;
+        margin: 5px 0;
+      }
+      .product-card .seller,
+      .product-card .date,
+      .product-card .status {
+        font-size: 14px;
+        color: #ddd;
+        margin: 5px 0;
+        word-break: break-all; /* Breaks long email addresses */
+      }
+      .product-card.purchased {
+        border-left: 4px solid #6366f1; /* Blue accent for purchased items */
+      }
+      .product-card.sold .status {
+        color: #ef4444; /* Red for sold */
+      }
+      .product-card.available .status {
+        color: #10b981; /* Green for available */
+      }
+      .empty-message {
+        font-size: 16px;
+        color: #aaa;
+        text-align: center;
+        padding: 10px;
+        width: 100%;
+      }
+
+      /* Forms and Buttons */
+      .chat-buttons {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .chat-btn {
+        flex: 1;
+        padding: 12px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.3s;
+        text-align: center;
+        text-decoration: none;
+        box-shadow: 0px 5px 15px rgba(16, 185, 129, 0.3);
+      }
+      .chat-btn:hover {
+        background: linear-gradient(135deg, #059669, #047857);
+        transform: scale(1.05);
+      }
+      .update-form,
+      .otp-form {
         margin-top: 10px;
         overflow: hidden;
         max-height: 0;
         transition: max-height 0.5s ease-in-out, opacity 0.3s ease-in-out;
         opacity: 0;
       }
-
-      .update-form.visible {
-        max-height: 500px; /* Adjust based on form height */
+      .update-form.visible,
+      .otp-form.visible {
+        max-height: 500px;
         opacity: 1;
       }
-
       .update-form input,
-      .update-form textarea {
+      .update-form textarea,
+      .otp-form input {
         width: 100%;
         padding: 12px;
         margin: 10px 0;
@@ -166,14 +290,14 @@
         color: #fff;
         outline: none;
       }
-
       .update-form input:focus,
-      .update-form textarea:focus {
+      .update-form textarea:focus,
+      .otp-form input:focus {
         background: rgba(255, 255, 255, 0.3);
         transform: scale(1.02);
       }
-
-      .update-form button {
+      .update-form button,
+      .otp-form button {
         width: 100%;
         padding: 12px;
         background: linear-gradient(135deg, #6366f1, #3b82f6);
@@ -185,21 +309,88 @@
         font-size: 18px;
         box-shadow: 0px 5px 15px rgba(59, 130, 246, 0.3);
       }
-
-      .update-form button:hover {
+      .update-form button:hover,
+      .otp-form button:hover {
         background: linear-gradient(135deg, #3b82f6, #1e40af);
         transform: scale(1.05);
       }
-
+      .logout-btn,
+      .deactivate-btn,
+      .delete-btn {
+        width: 100%;
+        padding: 12px;
+        margin-top: 15px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 18px;
+        transition: 0.3s;
+      }
       .logout-btn {
         background: linear-gradient(135deg, #ef4444, #b91c1c);
-        margin-top: 15px;
         box-shadow: 0px 5px 15px rgba(239, 68, 68, 0.3);
       }
-
       .logout-btn:hover {
         background: linear-gradient(135deg, #b91c1c, #7f1d1d);
         transform: scale(1.05);
+      }
+      .deactivate-btn {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        box-shadow: 0px 5px 15px rgba(245, 158, 11, 0.3);
+      }
+      .deactivate-btn:hover {
+        background: linear-gradient(135deg, #d97706, #b45309);
+        transform: scale(1.05);
+      }
+      .delete-btn {
+        background: linear-gradient(135deg, #dc2626, #991b1b);
+        box-shadow: 0px 5px 15px rgba(220, 38, 38, 0.3);
+      }
+      .delete-btn:hover {
+        background: linear-gradient(135deg, #991b1b, #7f1d1d);
+        transform: scale(1.05);
+      }
+
+      /* Virtual Keyboard */
+      .virtual-keyboard {
+        display: none;
+        margin-top: 15px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+      .virtual-keyboard.active {
+        display: grid;
+      }
+      .keyboard-btn {
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .keyboard-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+      }
+      .keyboard-btn:active {
+        background: rgba(59, 130, 246, 0.8);
+        transform: scale(0.95);
+      }
+      .keyboard-btn.clear {
+        background: rgba(239, 68, 68, 0.8);
+      }
+      .keyboard-btn.clear:hover {
+        background: rgba(220, 38, 38, 0.8);
+      }
+      .keyboard-btn.enter {
+        background: rgba(16, 185, 129, 0.8);
+        grid-column: span 2;
+      }
+      .keyboard-btn.enter:hover {
+        background: rgba(5, 150, 105, 0.8);
       }
     </style>
   </head>
@@ -216,7 +407,12 @@
         </div>
       </div>
       <h2>Welcome, {{ user.full_name|default:"User" }}</h2>
-      <a href="{% url 'chat_view' %}" class="btn btn-primary">Go to Chat</a>
+
+      <div class="chat-buttons">
+        <a href="{% url 'marketplace' %}" class="chat-btn">Go to Marketplace</a>
+        <a href="{% url 'chat_view' %}" class="chat-btn">Go to Chat</a>
+        <a href="{% url 'group_chat_view' %}" class="chat-btn">Group Chat</a>
+      </div>
 
       <div class="info">
         <p><strong>Email:</strong> {{ user.email }}</p>
@@ -231,7 +427,97 @@
         </p>
       </div>
 
-      <!-- Single Update Form for All Fields -->
+      <div class="wallet-section">
+        <p><strong>Wallet Balance:</strong> ${{ wallet_balance }}</p>
+        <form method="POST">
+          {% csrf_token %}
+          <input
+            type="number"
+            name="topup_amount"
+            placeholder="Amount"
+            min="1"
+            step="0.01"
+            required
+          />
+          <button type="submit">Top-up Wallet</button>
+        </form>
+      </div>
+
+      <!-- Products Section -->
+      <div class="products-section">
+        <h3>Listed Products</h3>
+        <div class="product-container">
+          {% for product in listed_products %}
+          <div
+            class="product-card {% if product.is_sold %}sold{% else %}available{% endif %}"
+          >
+            {% if product.image and product.image.url %}
+            <img
+              src="{{ product.image.url }}"
+              alt="{{ product.title }}"
+              class="product-image"
+            />
+            {% else %}
+            <img
+              src="https://via.placeholder.com/150"
+              alt="{{ product.title }}"
+              class="product-image"
+            />
+            {% endif %}
+            <h4>{{ product.title }}</h4>
+            <p class="price">${{ product.price }}</p>
+            <p class="status">
+              Status: {{ product.is_sold|yesno:"Sold,Available" }}
+            </p>
+            <p class="date">
+              Listed on: {{ product.created_at|date:"M d, Y" }}
+            </p>
+          </div>
+          {% empty %}
+          <p class="empty-message">No products listed yet.</p>
+          {% endfor %}
+        </div>
+
+        <h3>Purchased Products</h3>
+        <div class="product-container">
+          {% for product in purchased_products %}
+          <div class="product-card purchased">
+            {% if product.image and product.image.url %}
+            <img
+              src="{{ product.image.url }}"
+              alt="{{ product.title }}"
+              class="product-image"
+            />
+            {% else %}
+            <img
+              src="https://via.placeholder.com/150"
+              alt="{{ product.title }}"
+              class="product-image"
+            />
+            {% endif %}
+            <h4>{{ product.title }}</h4>
+            <p class="price">${{ product.price }}</p>
+            <p class="seller">Sold by: {{ product.seller.email }}</p>
+            {% if product.transaction_set.exists %}
+            <p class="transaction-details">
+              Transaction Amount: ${{ product.transaction_set.first.amount }}
+            </p>
+            <p class="transaction-details">
+              Buyer: {{ product.transaction_set.first.sender.email }}
+            </p>
+            <p class="transaction-details">
+              Seller: {{ product.transaction_set.first.receiver.email }}
+            </p>
+            {% else %}
+            <p class="transaction-details">Transaction details not available</p>
+            {% endif %}
+          </div>
+          {% empty %}
+          <p class="empty-message">No products purchased yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+      <!-- Update Form -->
       <form
         class="update-form"
         id="update-form"
@@ -256,58 +542,273 @@
         <button type="submit">Update Profile</button>
       </form>
 
+      <!-- Deactivation OTP Form -->
+      <form class="otp-form" id="deactivation-otp-form" method="POST">
+        {% csrf_token %}
+        <input
+          type="text"
+          id="deactivation-email-otp"
+          name="email_otp"
+          placeholder="Email OTP"
+          class="otp-input"
+          onclick="setActiveInput('email', 'deactivation')"
+        />
+        <input
+          type="text"
+          id="deactivation-mobile-otp"
+          name="mobile_otp"
+          placeholder="Mobile OTP"
+          class="otp-input"
+          onclick="setActiveInput('mobile', 'deactivation')"
+        />
+        <button type="submit">Confirm Deactivation</button>
+      </form>
+      <div class="virtual-keyboard" id="deactivation-keyboard">
+        <button class="keyboard-btn" onclick="addDigit('1', 'deactivation')">
+          1
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('2', 'deactivation')">
+          2
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('3', 'deactivation')">
+          3
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('4', 'deactivation')">
+          4
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('5', 'deactivation')">
+          5
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('6', 'deactivation')">
+          6
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('7', 'deactivation')">
+          7
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('8', 'deactivation')">
+          8
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('9', 'deactivation')">
+          9
+        </button>
+        <button class="keyboard-btn clear" onclick="clearInput('deactivation')">
+          <i class="fas fa-backspace"></i>
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('0', 'deactivation')">
+          0
+        </button>
+        <button class="keyboard-btn enter" onclick="submitOTP('deactivation')">
+          <i class="fas fa-check"></i> Submit
+        </button>
+      </div>
+
+      <!-- Deletion OTP Form -->
+      <form class="otp-form" id="deletion-otp-form" method="POST">
+        {% csrf_token %}
+        <input
+          type="text"
+          id="deletion-email-otp"
+          name="email_otp"
+          placeholder="Email OTP"
+          class="otp-input"
+          onclick="setActiveInput('email', 'deletion')"
+        />
+        <input
+          type="text"
+          id="deletion-mobile-otp"
+          name="mobile_otp"
+          placeholder="Mobile OTP"
+          class="otp-input"
+          onclick="setActiveInput('mobile', 'deletion')"
+        />
+        <button type="submit">Confirm Deletion</button>
+      </form>
+      <div class="virtual-keyboard" id="deletion-keyboard">
+        <button class="keyboard-btn" onclick="addDigit('1', 'deletion')">
+          1
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('2', 'deletion')">
+          2
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('3', 'deletion')">
+          3
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('4', 'deletion')">
+          4
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('5', 'deletion')">
+          5
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('6', 'deletion')">
+          6
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('7', 'deletion')">
+          7
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('8', 'deletion')">
+          8
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('9', 'deletion')">
+          9
+        </button>
+        <button class="keyboard-btn clear" onclick="clearInput('deletion')">
+          <i class="fas fa-backspace"></i>
+        </button>
+        <button class="keyboard-btn" onclick="addDigit('0', 'deletion')">
+          0
+        </button>
+        <button class="keyboard-btn enter" onclick="submitOTP('deletion')">
+          <i class="fas fa-check"></i> Submit
+        </button>
+      </div>
+
+      <!-- Action Buttons -->
+      <button class="deactivate-btn" onclick="requestDeactivation()">
+        Deactivate Account
+      </button>
+      <button class="delete-btn" onclick="requestDeletion()">
+        Delete Account
+      </button>
       <form method="POST" action="{% url 'logout' %}">
         {% csrf_token %}
         <button type="submit" class="logout-btn">Logout</button>
       </form>
     </div>
-    <script>
-      async function logout() {
-        const response = await fetch("/logout/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": "{{ csrf_token }}", // Include CSRF token for Django
-          },
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          // Redirect to the register page
-          window.location.href = data.redirect_url;
-        } else {
-          alert(data.error || "Logout failed");
-        }
-      }
-    </script>
 
     <script>
+      let activeInput = null;
+
       function toggleEdit(field) {
-        // Hide all fields first
         document.getElementById("username-fields").classList.add("hidden");
         document.getElementById("bio-fields").classList.add("hidden");
-        document
-          .getElementById("profile-picture-fields")
-          .classList.add("hidden");
-
-        // Show the selected field
+        document.getElementById("profile-picture-fields").classList.add("hidden");
         document.getElementById(`${field}-fields`).classList.remove("hidden");
-
-        // Show the form
         document.getElementById("update-form").classList.add("visible");
       }
-    </script>
 
-    <script>
-      // Check for Django messages and display SweetAlert2 notifications
+      function setActiveInput(inputId, type) {
+        activeInput = document.getElementById(`${type}-${inputId}-otp`);
+        activeInput.focus();
+        console.log(`DEBUG: Active input set to ${type}-${inputId}-otp`);
+
+        // Show the appropriate keyboard
+        if (type === 'deactivation') {
+          document.getElementById('deactivation-keyboard').classList.add('active');
+          document.getElementById('deletion-keyboard').classList.remove('active');
+        } else if (type === 'deletion') {
+          document.getElementById('deletion-keyboard').classList.add('active');
+          document.getElementById('deactivation-keyboard').classList.remove('active');
+        }
+      }
+
+      function addDigit(digit, type) {
+        if (!activeInput) {
+          Swal.fire({ icon: "warning", title: "No field selected", text: "Please click on an OTP field first" });
+          return;
+        }
+        activeInput.value = (activeInput.value || "") + digit;
+        console.log(`DEBUG: Added digit ${digit} to ${activeInput.id}, value now: ${activeInput.value}`);
+      }
+
+      function clearInput(type) {
+        if (!activeInput) {
+          Swal.fire({ icon: "warning", title: "No field selected", text: "Please click on an OTP field first" });
+          return;
+        }
+        activeInput.value = "";
+        console.log(`DEBUG: Cleared input ${activeInput.id}`);
+      }
+
+      function submitOTP(type) {
+        console.log(`DEBUG: Triggering submit for ${type}-otp-form`);
+        document.getElementById(`${type}-otp-form`).dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+      }
+
+      async function apiRequest(url, method, body) {
+        console.log(`DEBUG: Sending request to /api/users/${url} with method=${method}, body:`, body);
+        const response = await fetch(`/api/users/${url}`, {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}",
+          },
+          body: body ? JSON.stringify(body) : null,
+        });
+        const data = await response.json();
+        console.log(`DEBUG: Response from /api/users/${url}:`, data);
+        if (!response.ok) throw new Error(data.error || "Request failed");
+        return data;
+      }
+
+      async function requestDeactivation() {
+        try {
+          const data = await apiRequest("request-deactivation/", "POST", {});
+          Swal.fire({ icon: "info", title: "OTP Sent", text: data.message });
+          document.getElementById("deactivation-otp-form").classList.add("visible");
+          setActiveInput("email", "deactivation");
+        } catch (error) {
+          Swal.fire({ icon: "error", title: "Error", text: error.message });
+        }
+      }
+
+      async function requestDeletion() {
+        try {
+          const data = await apiRequest("request-deletion/", "POST", {});
+          Swal.fire({ icon: "info", title: "OTP Sent", text: data.message });
+          document.getElementById("deletion-otp-form").classList.add("visible");
+          setActiveInput("email", "deletion");
+        } catch (error) {
+          Swal.fire({ icon: "error", title: "Error", text: error.message });
+        }
+      }
+
+      document.getElementById("deactivation-otp-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email_otp = document.getElementById("deactivation-email-otp").value.trim();
+        const mobile_otp = document.getElementById("deactivation-mobile-otp").value.trim();
+        console.log(`DEBUG: Deactivation OTPs captured - email_otp: "${email_otp}", mobile_otp: "${mobile_otp}"`);
+        if (!email_otp || !mobile_otp) {
+          Swal.fire({ icon: "warning", title: "Missing OTP", text: "Please enter both OTPs" });
+          return;
+        }
+        const body = { email_otp, mobile_otp };
+        try {
+          const data = await apiRequest("confirm-deactivation/", "POST", body);
+          Swal.fire({ icon: "success", title: "Pending Approval", text: data.message });
+          document.getElementById("deactivation-otp-form").classList.remove("visible");
+          document.getElementById("deactivation-keyboard").classList.remove("active");
+        } catch (error) {
+          Swal.fire({ icon: "error", title: "Error", text: error.message });
+        }
+      });
+
+      document.getElementById("deletion-otp-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email_otp = document.getElementById("deletion-email-otp").value.trim();
+        const mobile_otp = document.getElementById("deletion-mobile-otp").value.trim();
+        console.log(`DEBUG: Deletion OTPs captured - email_otp: "${email_otp}", mobile_otp: "${mobile_otp}"`);
+        if (!email_otp || !mobile_otp) {
+          Swal.fire({ icon: "warning", title: "Missing OTP", text: "Please enter both OTPs" });
+          return;
+        }
+        const body = { email_otp, mobile_otp };
+        try {
+          const data = await apiRequest("confirm-deletion/", "POST", body);
+          Swal.fire({ icon: "success", title: "Pending Approval", text: data.message });
+          document.getElementById("deletion-otp-form").classList.remove("visible");
+          document.getElementById("deletion-keyboard").classList.remove("active");
+        } catch (error) {
+          Swal.fire({ icon: "error", title: "Error", text: error.message });
+        }
+      });
+
       {% if messages %}
         {% for message in messages %}
           Swal.fire({
-            icon: "{{ message.tags }}",  // Success, error, warning, etc.
-            title: "{{ message }}",      // Message content
+            icon: "{{ message.tags }}",
+            title: "{{ message }}",
             showConfirmButton: false,
-            timer: 3000,                 // Auto-close after 3 seconds
+            timer: 3000,
           });
         {% endfor %}
       {% endif %}

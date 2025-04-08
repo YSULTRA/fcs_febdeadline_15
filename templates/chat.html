@@ -14,7 +14,6 @@
         color: var(--text-color);
       }
 
-      /* Dark and Light Theme Variables */
       :root {
         --background-color: #fafafa;
         --text-color: #333;
@@ -47,7 +46,6 @@
         --selected-user-background: #004d40;
       }
 
-      /* Sidebar styling */
       .sidebar {
         width: 25%;
         background: var(--sidebar-background);
@@ -113,8 +111,23 @@
       .user-list li.has-unread .unread-indicator {
         display: block;
       }
+      .user-list li.blocked-user {
+        opacity: 0.5;
+        position: relative;
+      }
+      .user-list li.blocked-user::after {
+        content: "Blocked";
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        background: #f44336;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 12px;
+      }
 
-      /* Chat Window Styling */
       .chat-window {
         width: 75%;
         display: flex;
@@ -131,6 +144,11 @@
         text-align: center;
         border-bottom: 1px solid var(--chat-input-border);
         box-shadow: var(--chat-header-shadow);
+      }
+      .chat-header.blocked::after {
+        content: " (Blocked)";
+        color: #f44336;
+        font-size: 16px;
       }
       .messages {
         flex-grow: 1;
@@ -180,64 +198,80 @@
       .message.sent .status-indicator {
         color: #4caf50;
       }
+      .message img,
+      .message video {
+        max-width: 100%;
+        border-radius: 10px;
+        margin-top: 5px;
+      }
 
-      /* Message Input Box */
       .chat-input {
         padding: 15px;
         background: var(--chat-input-background);
         border-top: 1px solid var(--chat-input-border);
       }
-      .chat-input input {
-        flex-grow: 1;
-        padding: 10px;
-        border: 1px solid var(--chat-input-border);
-        border-radius: 25px;
-        outline: none;
-        font-size: 16px;
-        background: var(--sidebar-background);
-        color: var(--text-color);
-      }
-      .chat-input button {
-        padding: 10px 20px;
-        margin-left: 10px;
-        border: none;
-        background: var(--message-sent-background);
-        color: white;
-        cursor: pointer;
-        border-radius: 25px;
-        transition: background 0.3s ease, transform 0.2s ease;
-      }
-      .chat-input button:hover {
-        background: #007acc;
-        transform: scale(1.05);
-      }
-
-      /* Theme Toggle Button */
-      .theme-toggle {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        padding: 10px 20px;
-        border: none;
-        background: var(--message-sent-background);
-        color: white;
-        cursor: pointer;
-        border-radius: 25px;
-        transition: background 0.3s ease;
-      }
-      .theme-toggle:hover {
-        background: #007acc;
+      .chat-input.disabled {
+        opacity: 0.5;
+        pointer-events: none;
       }
       .input-container {
         display: flex;
-        align-items: flex-end;
+        align-items: center;
         gap: 10px;
         background: var(--sidebar-background);
         border-radius: 25px;
         padding: 10px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
-      /* Theme Toggle Button */
+      textarea {
+        flex-grow: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 20px;
+        outline: none;
+        font-size: 16px;
+        background: transparent;
+        color: var(--text-color);
+        resize: none;
+        overflow-y: hidden;
+        max-height: 150px;
+      }
+      textarea::placeholder {
+        color: #999;
+      }
+      .media-upload-btn {
+        padding: 10px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .media-upload-btn:hover {
+        background: var(--user-list-hover);
+      }
+      .send-button {
+        padding: 10px;
+        border: none;
+        background: var(--message-sent-background);
+        color: white;
+        cursor: pointer;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
+      .send-button:hover {
+        background: #007acc;
+        transform: scale(1.1);
+      }
       .theme-toggle {
         position: fixed;
         top: 10px;
@@ -254,59 +288,71 @@
         align-items: center;
         justify-content: center;
         transition: background 0.3s ease;
-        z-index: 1000; /* Ensure it's above other elements */
+        z-index: 1000;
       }
-
       .theme-toggle:hover {
-        background: var(--message-sent-hover);
+        background: #007acc;
       }
 
-      .theme-toggle svg {
-        fill: white;
+      .media-preview {
+        display: none;
+        margin-bottom: 10px;
+        position: relative;
+        max-width: 200px;
+        border-radius: 10px;
+        overflow: hidden;
       }
-
-      textarea {
-        flex-grow: 1;
-        padding: 10px;
-        border: none;
-        border-radius: 20px;
-        outline: none;
-        font-size: 16px;
-        background: transparent;
-        color: var(--text-color);
-        resize: none;
-        overflow-y: hidden;
-        max-height: 150px; /* Limit maximum height */
+      .media-preview img,
+      .media-preview video {
+        max-width: 100%;
+        border-radius: 10px;
       }
-      textarea::placeholder {
-        color: #999;
-      }
-
-      .send-button {
-        padding: 10px;
-        border: none;
-        background: var(--message-sent-background);
+      .media-preview .remove-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(0, 0, 0, 0.5);
         color: white;
-        cursor: pointer;
+        border: none;
         border-radius: 50%;
-        width: 40px;
-        height: 40px;
+        width: 24px;
+        height: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: background 0.3s ease, transform 0.2s ease;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      .media-preview .remove-btn:hover {
+        background: rgba(0, 0, 0, 0.7);
       }
 
-      .send-button:hover {
-        background: var(--message-sent-hover);
-        transform: scale(1.1);
+      .notification {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        background: var(--message-sent-background);
+        color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        font-size: 16px;
+        font-weight: bold;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        transform: translateY(20px);
+        z-index: 1000;
+      }
+      .notification.show {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+      }
+      body.dark-theme .notification {
+        background: var(--message-sent-background);
       }
 
-      .send-button svg {
-        fill: white;
-      }
-
-      /* Animations */
       @keyframes fadeIn {
         from {
           opacity: 0;
@@ -317,6 +363,101 @@
           transform: translateY(0);
         }
       }
+
+      .create-group-btn {
+        position: fixed;
+        top: 60px;
+        right: 10px;
+        padding: 10px 20px;
+        background: var(--message-sent-background);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        z-index: 1000;
+      }
+      .create-group-btn:hover {
+        background: #007acc;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+      }
+      .modal-content {
+        background: var(--sidebar-background);
+        margin: 15% auto;
+        padding: 20px;
+        border-radius: 10px;
+        width: 300px;
+        text-align: center;
+      }
+      .modal-content h2 {
+        margin-bottom: 20px;
+      }
+      .modal-content input,
+      .modal-content select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid var(--chat-input-border);
+        border-radius: 5px;
+      }
+      .modal-content button {
+        padding: 10px 20px;
+        background: var(--message-sent-background);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .modal-content button:hover {
+        background: #007acc;
+      }
+      .close {
+        float: right;
+        font-size: 24px;
+        cursor: pointer;
+      }
+      .group-chat-link {
+        display: block;
+        margin: 10px 0;
+        color: var(--message-sent-background);
+        text-decoration: none;
+      }
+      .group-chat-link:hover {
+        text-decoration: underline;
+      }
+
+      .report-btn,
+      .block-btn {
+        margin-left: 10px;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+      .report-btn {
+        background: #ff9800;
+        color: white;
+      }
+      .block-btn {
+        background: #f44336;
+        color: white;
+      }
+      .report-btn:hover {
+        background: #e68900;
+      }
+      .block-btn:hover {
+        background: #d32f2f;
+      }
     </style>
     <script>
       // Auto-resize textarea
@@ -326,177 +467,520 @@
       }
 
       let selectedUser = null;
-      let lastSelectedUser = null; // Track the last selected user
-      let lastMessageTimestamp = null; // Track the timestamp of the last fetched message
-      const senderEmail = "{{ sender.email }}"; // Sender's email from the template context
+      let lastSelectedUser = null;
+      let lastMessageTimestamp = null;
+      let isBlockedByMe = false;
+      const senderEmail = "{{ sender.email }}";
 
-      // Fetch messages from the server
-      async function fetchMessages() {
-        if (!selectedUser) return;
-
-        try {
-          let response = await fetch(
-            `/get-messages/?sender=${senderEmail}&receiver=${selectedUser}`
-          );
-          if (!response.ok) throw new Error("Failed to fetch messages");
-
-          let data = await response.json();
-          let messagesDiv = document.getElementById("messages");
-
-          // Check if the selected user has changed
-          if (selectedUser !== lastSelectedUser) {
-            messagesDiv.innerHTML = ""; // Clear messages only if the user has changed
-            lastSelectedUser = selectedUser; // Update the last selected user
-            lastMessageTimestamp = null; // Reset the last message timestamp
-          }
-
-          // Filter out messages that are older than the last fetched message
-          let newMessages = data.messages;
-          if (lastMessageTimestamp) {
-            newMessages = data.messages.filter(
-              (msg) => new Date(msg.timestamp) > new Date(lastMessageTimestamp)
-            );
-          }
-
-          // Append only new messages
-          newMessages.forEach((msg) => {
-            let messageDiv = document.createElement("div");
-            messageDiv.classList.add("message");
-            messageDiv.classList.add(
-              msg.sender === senderEmail ? "sent" : "received"
-            );
-
-            // Add avatar
-            let avatar = document.createElement("img");
-            avatar.src =
-              msg.sender === senderEmail
-                ? "{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}https://e7.pngegg.com/pngimages/798/436/png-clipart-computer-icons-user-profile-avatar-profile-heroes-black.png{% endif %}"
-                : "{% if receiver and receiver.profile_picture %}{{ receiver.profile_picture.url }}{% else %}https://e7.pngegg.com/pngimages/798/436/png-clipart-computer-icons-user-profile-avatar-profile-heroes-black.png{% endif %}";
-            avatar.classList.add("avatar");
-            messageDiv.appendChild(avatar);
-
-            // Add message text
-            let text = document.createElement("span");
-            text.innerText = msg.text;
-            messageDiv.appendChild(text);
-
-            // Add timestamp
-            let timestamp = document.createElement("span");
-            timestamp.classList.add("timestamp");
-            timestamp.innerText = new Date(msg.timestamp).toLocaleTimeString();
-            messageDiv.appendChild(timestamp);
-
-            // Add status indicator for sent messages
-            if (msg.sender === senderEmail) {
-              let statusIndicator = document.createElement("span");
-              statusIndicator.classList.add("status-indicator");
-              statusIndicator.innerText = "✓";
-              messageDiv.appendChild(statusIndicator);
-            }
-
-            // Append the message to the chat window
-            messagesDiv.appendChild(messageDiv);
-
-            // Animate only new messages
-            if (newMessages.length > 0) {
-              messageDiv.style.animation = "fadeIn 0.3s ease";
-            }
-          });
-
-          // Update the last message timestamp
-          if (newMessages.length > 0) {
-            lastMessageTimestamp =
-              newMessages[newMessages.length - 1].timestamp;
-          }
-
-          // Auto-scroll to the bottom
-          messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        } catch (error) {
-          console.error("Error fetching messages:", error);
-        }
-      }
-
-      // Select a user to chat with
-      function selectUser(email, name) {
-        selectedUser = email;
-        document.getElementById("chat-header").innerText = `Chat with ${name}`;
-        document.getElementById("receiverInput").value = selectedUser; // Set the receiver value
-
-        // Remove selected class from all users
-        document.querySelectorAll(".user-list li").forEach((li) => {
-          li.classList.remove("selected");
-        });
-
-        // Add selected class to the clicked user
-        event.currentTarget.classList.add("selected");
-
-        fetchMessages(); // Fetch messages for the selected user
-      }
-
-      // Send a message
-      async function sendMessage(event) {
-        event.preventDefault();
-
-        let text = document.getElementById("messageInput").value.trim();
-        if (!text || !selectedUser) return;
-
-        try {
-          let response = await fetch("/send-message/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": getCSRFToken(),
-            },
-            body: JSON.stringify({
-              sender: senderEmail,
-              receiver: selectedUser,
-              text: text,
-            }),
-          });
-
-          if (response.ok) {
-            document.getElementById("messageInput").value = "";
-            fetchMessages(); // Refresh chat
-          } else {
-            console.error("Error sending message:", await response.json());
-          }
-        } catch (error) {
-          console.error("Network error:", error);
-        }
+      function showNotification(message, duration = 3000) {
+        const notification = document.getElementById("notification");
+        notification.textContent = message;
+        notification.classList.add("show");
+        setTimeout(() => notification.classList.remove("show"), duration);
       }
 
       function getCSRFToken() {
         return document.querySelector("[name=csrfmiddlewaretoken]").value;
       }
 
-      // Auto-refresh messages every 3 seconds
-      setInterval(fetchMessages, 3000);
+      async function blockUser(userEmail) {
+        if (!confirm(`Are you sure you want to block ${userEmail}?`)) return;
 
-      // Filter users based on search input
+        try {
+          const response = await fetch("/block-user/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify({ blocked_user: userEmail }),
+            credentials: "include",
+          });
+
+          const data = await response.json();
+          if (response.ok) {
+            showNotification(`Blocked ${userEmail}`);
+            const userLi = document.querySelector(
+              `.user-list li[data-email="${userEmail}"]`
+            );
+            if (userLi) {
+              userLi.classList.add("blocked-user");
+              userLi.style.opacity = "0.5";
+            }
+            if (selectedUser === userEmail) {
+              isBlockedByMe = true;
+              updateChatInput();
+              document.getElementById("chat-header").classList.add("blocked");
+            }
+            fetchMessages();
+          } else if (response.status === 401) {
+            showNotification("Please log in to block users.");
+            setTimeout(() => (window.location.href = "/login/"), 2000);
+          } else {
+            showNotification(data.error || "Failed to block user.");
+          }
+        } catch (error) {
+          console.error("Block error:", error);
+          showNotification("Network error occurred. Please try again.");
+        }
+      }
+
+      async function reportMessage(messageId, senderEmail) {
+        const reason = prompt(
+          "Please enter a reason for reporting this message:"
+        );
+        if (!reason) {
+          showNotification("Report cancelled: Reason is required.");
+          return;
+        }
+
+        try {
+          // Step 1: Submit report request
+          const reportResponse = await fetch("/report-message/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify({
+              message_id: messageId,
+              reason: reason,
+              is_group: selectedGroup ? true : false,
+            }),
+            credentials: "include",
+          });
+
+          const reportData = await reportResponse.json();
+          console.log("DEBUG: Report response:", reportData);
+
+          if (!reportResponse.ok) {
+            showNotification(reportData.error || "Failed to initiate report.");
+            if (reportResponse.status === 401) {
+              setTimeout(() => (window.location.href = "/login/"), 2000);
+            }
+            return;
+          }
+
+          showNotification("OTP sent to your email and mobile. Please check.");
+
+          // Step 2: Prompt for OTPs
+          const emailOtp = prompt("Enter the OTP sent to your email:");
+          const mobileOtp = prompt("Enter the OTP sent to your mobile:");
+          if (!emailOtp || !mobileOtp) {
+            showNotification("OTP verification cancelled.");
+            return;
+          }
+
+          // Step 3: Confirm report with OTPs
+          const confirmResponse = await fetch("/confirm-report/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify({
+              report_id: reportData.report_id,
+              email_otp: emailOtp,
+              mobile_otp: mobileOtp,
+            }),
+            credentials: "include",
+          });
+
+          const confirmData = await confirmResponse.json();
+          console.log("DEBUG: Confirm response:", confirmData);
+
+          if (confirmResponse.ok) {
+            showNotification(
+              "Report submitted successfully! Awaiting admin approval."
+            );
+            const messageDiv = document.querySelector(
+              `.message[data-id="${messageId}"]`
+            );
+            if (messageDiv) messageDiv.style.backgroundColor = "#ffe0b2"; // Highlight reported message
+          } else {
+            showNotification(confirmData.error || "Failed to confirm report.");
+            if (confirmResponse.status === 401) {
+              setTimeout(() => (window.location.href = "/login/"), 2000);
+            }
+          }
+        } catch (error) {
+          console.error("Report error:", error);
+          showNotification("Network error occurred. Please try again.");
+        }
+      }
+
+      async function fetchMessages() {
+        if (!selectedUser) {
+          console.log("No user selected, skipping fetch");
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `/get-messages/?sender=${senderEmail}&receiver=${selectedUser}`
+          );
+          if (!response.ok)
+            throw new Error(`Failed to fetch messages: ${response.status}`);
+          const data = await response.json();
+
+          const messagesDiv = document.getElementById("messages");
+          if (selectedUser !== lastSelectedUser) {
+            messagesDiv.innerHTML = "";
+            lastSelectedUser = selectedUser;
+            lastMessageTimestamp = null;
+          }
+
+          isBlockedByMe = data.is_blocked;
+          updateChatInput();
+
+          const newMessages = lastMessageTimestamp
+            ? data.messages.filter(
+                (msg) =>
+                  new Date(msg.timestamp) > new Date(lastMessageTimestamp)
+              )
+            : data.messages;
+
+          if (newMessages.length > 0) {
+            newMessages.forEach((msg) => {
+              const messageDiv = document.createElement("div");
+              messageDiv.classList.add(
+                "message",
+                msg.sender === senderEmail ? "sent" : "received"
+              );
+              messageDiv.setAttribute("data-id", msg.id);
+              messageDiv.setAttribute("data-sender", msg.sender);
+
+              const avatar = document.createElement("img");
+              avatar.src =
+                msg.sender === senderEmail
+                  ? "{% if sender.profile_picture %}{{ sender.profile_picture.url }}{% else %}https://e7.pngegg.com/pngimages/798/436/png-clipart-computer-icons-user-profile-avatar-profile-heroes-black.png{% endif %}"
+                  : "{% if receiver and receiver.profile_picture %}{{ receiver.profile_picture.url }}{% else %}https://e7.pngegg.com/pngimages/798/436/png-clipart-computer-icons-user-profile-avatar-profile-heroes-black.png{% endif %}";
+              avatar.classList.add("avatar");
+              messageDiv.appendChild(avatar);
+
+              const contentDiv = document.createElement("div");
+              contentDiv.classList.add("message-content");
+
+              if (msg.text) {
+                const textElement = document.createElement("span");
+                textElement.textContent = msg.text;
+                contentDiv.appendChild(textElement);
+              }
+
+              if (msg.media_url) {
+                const mediaElement =
+                  msg.media_type === "mp4"
+                    ? document.createElement("video")
+                    : document.createElement("img");
+                mediaElement.src = msg.media_url;
+                if (msg.media_type === "mp4") mediaElement.controls = true;
+                contentDiv.appendChild(mediaElement);
+              }
+
+              messageDiv.appendChild(contentDiv);
+
+              const timestamp = document.createElement("span");
+              timestamp.classList.add("timestamp");
+              timestamp.textContent = new Date(
+                msg.timestamp
+              ).toLocaleTimeString();
+              messageDiv.appendChild(timestamp);
+
+              // Add report and block buttons only for received messages
+              if (msg.sender !== senderEmail) {
+                {% comment %} const reportBtn = document.createElement("button");
+                reportBtn.classList.add("report-btn");
+                reportBtn.innerText = "Report";
+                reportBtn.onclick = () => reportMessage(msg.id, msg.sender);
+                messageDiv.appendChild(reportBtn); {% endcomment %}
+
+                const blockBtn = document.createElement("button");
+                blockBtn.classList.add("block-btn");
+                blockBtn.innerText = "Block";
+                blockBtn.onclick = () => blockUser(msg.sender);
+                messageDiv.appendChild(blockBtn);
+              }
+
+              const statusIndicator = document.createElement("span");
+              statusIndicator.classList.add("status-indicator");
+              statusIndicator.textContent = msg.signature_valid
+                ? "✓ Verified"
+                : "✗ Invalid";
+              statusIndicator.style.color = msg.signature_valid
+                ? "#4caf50"
+                : "#f44336";
+              messageDiv.appendChild(statusIndicator);
+
+              messagesDiv.appendChild(messageDiv);
+            });
+
+            lastMessageTimestamp =
+              newMessages[newMessages.length - 1].timestamp;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+          }
+        } catch (error) {
+          console.error("Error fetching messages:", error);
+          showNotification("Error loading messages", 2000);
+        }
+      }
+
+      function updateChatInput() {
+        const chatInput = document.querySelector(".chat-input");
+        const header = document.getElementById("chat-header");
+        const isBlockedByOther = document
+          .querySelector(`.user-list li[data-email="${selectedUser}"]`)
+          ?.classList.contains("blocked-user");
+
+        if (isBlockedByMe || isBlockedByOther) {
+          chatInput.classList.add("disabled");
+          if (isBlockedByMe) header.classList.add("blocked");
+          else header.classList.remove("blocked");
+        } else {
+          chatInput.classList.remove("disabled");
+          header.classList.remove("blocked");
+        }
+      }
+
+      let refreshInterval = setInterval(fetchMessages, 2000);
+
+      function selectUser(email, name) {
+        clearInterval(refreshInterval);
+        selectedUser = email;
+        document.getElementById(
+          "chat-header"
+        ).textContent = `Chat with ${name}`;
+        document.getElementById("receiverInput").value = selectedUser;
+
+        document
+          .querySelectorAll(".user-list li")
+          .forEach((li) => li.classList.remove("selected"));
+        event.currentTarget.classList.add("selected");
+
+        fetchMessages();
+        refreshInterval = setInterval(fetchMessages, 2000);
+      }
+
+      async function sendMessage(event) {
+        event.preventDefault();
+
+        if (isBlockedByMe) {
+          showNotification("You cannot send messages to a blocked user.");
+          return;
+        }
+
+        const text = document.getElementById("messageInput").value.trim();
+        const mediaFile = document.getElementById("mediaInput").files[0];
+        if (!text && !mediaFile) return;
+
+        const formData = new FormData();
+        formData.append("sender", senderEmail);
+        formData.append("receiver", selectedUser);
+        if (text) formData.append("text", text);
+        if (mediaFile) formData.append("media", mediaFile);
+
+        try {
+          const response = await fetch("/send-message/", {
+            method: "POST",
+            body: formData,
+            headers: { "X-CSRFToken": getCSRFToken() },
+          });
+
+          const data = await response.json();
+          if (response.ok) {
+            document.getElementById("messageInput").value = "";
+            document.getElementById("mediaInput").value = "";
+            clearMediaPreview();
+            fetchMessages();
+            if (mediaFile) {
+              const fileType = mediaFile.type.startsWith("image/")
+                ? "Image"
+                : "Video";
+              showNotification(`${fileType} uploaded successfully!`, 3000);
+            } else {
+              showNotification("Message sent successfully!", 2000);
+            }
+          } else {
+            showNotification(data.error || "Failed to send message.", 3000);
+          }
+        } catch (error) {
+          console.error("Network error:", error);
+          showNotification("Network error occurred.", 3000);
+        }
+      }
+
+      function displayMediaPreview(file) {
+        const previewDiv = document.getElementById("mediaPreview");
+        previewDiv.innerHTML = "";
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const mediaElement = file.type.startsWith("image/")
+            ? document.createElement("img")
+            : document.createElement("video");
+          mediaElement.src = e.target.result;
+          if (file.type.startsWith("video/")) mediaElement.controls = true;
+          const removeBtn = document.createElement("button");
+          removeBtn.classList.add("remove-btn");
+          removeBtn.innerText = "×";
+          removeBtn.onclick = clearMediaPreview;
+          previewDiv.appendChild(mediaElement);
+          previewDiv.appendChild(removeBtn);
+          previewDiv.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function clearMediaPreview() {
+        const previewDiv = document.getElementById("mediaPreview");
+        previewDiv.innerHTML = "";
+        previewDiv.style.display = "none";
+        document.getElementById("mediaInput").value = "";
+      }
+
+      document.getElementById("mediaInput").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) displayMediaPreview(file);
+        else clearMediaPreview();
+      });
+
       function filterUsers() {
         const searchTerm = document
           .getElementById("search-bar")
           .value.toLowerCase();
         const userList = document.getElementById("user-list").children;
-
         Array.from(userList).forEach((user) => {
           const userName = user.querySelector("span").textContent.toLowerCase();
-          if (userName.includes(searchTerm)) {
-            user.style.display = "flex";
-          } else {
-            user.style.display = "none";
-          }
+          user.style.display = userName.includes(searchTerm) ? "flex" : "none";
         });
       }
 
-      // Toggle between dark and light theme
       function toggleTheme() {
         document.body.classList.toggle("dark-theme");
       }
+
+      // Group-related functions
+      async function checkVerificationStatus() {
+        try {
+          const response = await fetch("/get-user-profile/", {
+            headers: { "X-CSRFToken": getCSRFToken() },
+          });
+          if (!response.ok) throw new Error("Failed to fetch profile");
+          const data = await response.json();
+          const isVerified = data.data.is_verified_by_admin;
+          updateGroupUI(isVerified);
+        } catch (error) {
+          console.error("Error checking verification status:", error);
+          showNotification("Error checking status.", 3000);
+        }
+      }
+
+      function updateGroupUI(isVerified) {
+        const actionContainer = document.getElementById("groupActionContainer");
+        const modalContainer = document.getElementById("groupModalContainer");
+
+        if (isVerified) {
+          actionContainer.innerHTML =
+            '<button class="create-group-btn" onclick="openGroupModal()">Create Group</button>';
+          if (!document.getElementById("groupModal")) {
+            modalContainer.innerHTML = `
+              <div id="groupModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                  <span class="close" onclick="closeGroupModal()">×</span>
+                  <h2>Create a Group</h2>
+                  <form id="groupForm" onsubmit="createGroup(event)">
+                    <input type="text" id="groupName" placeholder="Group Name" required />
+                    <select multiple id="groupMembers" required>
+                      {% for user in users %}
+                        {% if user.email != sender.email %}
+                          <option value="{{ user.email }}">{{ user.full_name }} ({{ user.email }})</option>
+                        {% endif %}
+                      {% endfor %}
+                    </select>
+                    <button type="submit">Create Group</button>
+                  </form>
+                </div>
+              </div>
+            `;
+          }
+        } else {
+          actionContainer.innerHTML =
+            '<button class="create-group-btn" onclick="requestGroupCreation()">Request Group Creation</button>';
+          modalContainer.innerHTML = "";
+        }
+      }
+
+      function openGroupModal() {
+        const modal = document.getElementById("groupModal");
+        if (modal) modal.style.display = "block";
+      }
+
+      function closeGroupModal() {
+        const modal = document.getElementById("groupModal");
+        if (modal) modal.style.display = "none";
+      }
+
+      async function createGroup(event) {
+        event.preventDefault();
+        const groupName = document.getElementById("groupName").value;
+        const memberEmails = Array.from(
+          document.getElementById("groupMembers").selectedOptions
+        ).map((opt) => opt.value);
+        const formData = new FormData();
+        formData.append("group_name", groupName);
+        memberEmails.forEach((email) => formData.append("members", email));
+
+        try {
+          const response = await fetch("/create-group/", {
+            method: "POST",
+            body: formData,
+            headers: { "X-CSRFToken": getCSRFToken() },
+          });
+          const data = await response.json();
+          if (response.ok) {
+            showNotification("Group created successfully!", 2000);
+            closeGroupModal();
+            document.getElementById("groupForm").reset();
+          } else {
+            showNotification(data.error || "Failed to create group.", 3000);
+          }
+        } catch (error) {
+          console.error("Error creating group:", error);
+          showNotification("Network error occurred.", 3000);
+        }
+      }
+
+      async function requestGroupCreation() {
+        const formData = new FormData();
+        formData.append("sender", "{{ sender.email }}");
+        try {
+          const response = await fetch("/create-group/", {
+            method: "POST",
+            body: formData,
+            headers: { "X-CSRFToken": getCSRFToken() },
+          });
+          const data = await response.json();
+          if (response.status === 201) {
+            showNotification("Group creation request sent to admin!", 3000);
+            let pollCount = 0;
+            const pollInterval = setInterval(() => {
+              checkVerificationStatus();
+              pollCount++;
+              if (pollCount >= 6) clearInterval(pollInterval);
+            }, 5000);
+          } else {
+            showNotification(data.error || "Failed to send request.", 3000);
+          }
+        } catch (error) {
+          console.error("Error sending request:", error);
+          showNotification("Network error occurred.", 3000);
+        }
+      }
+
+      checkVerificationStatus();
+      setInterval(checkVerificationStatus, 15000);
     </script>
   </head>
   <body>
-    <!-- Theme Toggle Button -->
+    <div id="notification" class="notification"></div>
     <button class="theme-toggle" onclick="toggleTheme()">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -510,8 +994,43 @@
         />
       </svg>
     </button>
-
-    <!-- Sidebar for User List -->
+    <div id="groupActionContainer">
+      {% if sender.is_verified_by_admin %}
+      <button class="create-group-btn" onclick="openGroupModal()">
+        Create Group
+      </button>
+      {% else %}
+      <button class="create-group-btn" onclick="requestGroupCreation()">
+        Request Group Creation
+      </button>
+      {% endif %}
+    </div>
+    <div id="groupModalContainer">
+      {% if sender.is_verified_by_admin %}
+      <div id="groupModal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeGroupModal()">×</span>
+          <h2>Create a Group</h2>
+          <form id="groupForm" onsubmit="createGroup(event)">
+            <input
+              type="text"
+              id="groupName"
+              placeholder="Group Name"
+              required
+            />
+            <select multiple id="groupMembers" required>
+              {% for user in users %} {% if user.email != sender.email %}
+              <option value="{{ user.email }}">
+                {{ user.full_name }} ({{ user.email }})
+              </option>
+              {% endif %} {% endfor %}
+            </select>
+            <button type="submit">Create Group</button>
+          </form>
+        </div>
+      </div>
+      {% endif %}
+    </div>
     <div class="sidebar">
       <h2>Chats</h2>
       <input
@@ -523,7 +1042,11 @@
       />
       <ul id="user-list" class="user-list">
         {% for user in users %}
-        <li onclick="selectUser('{{ user.email }}', '{{ user.full_name }}')">
+        <li
+          onclick="selectUser('{{ user.email }}', '{{ user.full_name }}')"
+          data-email="{{ user.email }}"
+          class="{% if user.email in blocked_users %}blocked-user{% endif %}"
+        >
           <img
             src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}https://e7.pngegg.com/pngimages/798/436/png-clipart-computer-icons-user-profile-avatar-profile-heroes-black.png{% endif %}"
             alt="Avatar"
@@ -535,15 +1058,12 @@
         {% endfor %}
       </ul>
     </div>
-
-    <!-- Chat Window -->
     <div class="chat-window">
       <div id="chat-header" class="chat-header">Select a user to chat</div>
-      <div id="messages" class="messages">
-        <!-- Messages will be dynamically inserted here -->
-      </div>
+      <div id="messages" class="messages"></div>
       <div class="chat-input">
-        <form onsubmit="sendMessage(event)">
+        <div id="mediaPreview" class="media-preview"></div>
+        <form onsubmit="sendMessage(event)" enctype="multipart/form-data">
           {% csrf_token %}
           <input type="hidden" name="sender" value="{{ sender.email }}" />
           <input type="hidden" name="receiver" id="receiverInput" value="" />
@@ -555,6 +1075,26 @@
               rows="1"
               oninput="autoResize(this)"
             ></textarea>
+            <label class="media-upload-btn">
+              <input
+                type="file"
+                id="mediaInput"
+                name="media"
+                accept="image/*,video/*"
+                style="display: none"
+              />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+              >
+                <path
+                  fill="currentColor"
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"
+                />
+              </svg>
+            </label>
             <button type="submit" class="send-button">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

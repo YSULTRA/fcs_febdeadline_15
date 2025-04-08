@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Group Chat</title>
+    <style>
+      /* Styles remain unchanged */
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        height: 100vh;
+        margin: 0;
+        background: var(--background-color);
+        color: var(--text-color);
+      }
+      :root {
+        --background-color: #fafafa;
+        --text-color: #333;
+        --sidebar-background: #fff;
+        --sidebar-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        --user-list-hover: #f5f5f5;
+        --chat-header-background: #fff;
+        --chat-header-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        --message-sent-background: #0099ff;
+        --message-received-background: #fff;
+        --message-received-border: #ddd;
+        --chat-input-background: #fff;
+        --chat-input-border: #ddd;
+        --selected-user-background: #e0f7fa;
+      }
+      body.dark-theme {
+        --background-color: #121212;
+        --text-color: #e0e0e0;
+        --sidebar-background: #1e1e1e;
+        --sidebar-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+        --user-list-hover: #333;
+        --chat-header-background: #1e1e1e;
+        --chat-header-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        --message-sent-background: #007acc;
+        --message-received-background: #333;
+        --message-received-border: #444;
+        --chat-input-background: #1e1e1e;
+        --chat-input-border: #444;
+        --selected-user-background: #004d40;
+      }
+
+      .sidebar {
+        width: 25%;
+        background: var(--sidebar-background);
+        overflow-y: auto;
+        padding: 15px;
+        border-right: 1px solid var(--chat-input-border);
+        box-shadow: var(--sidebar-shadow);
+      }
+      .sidebar h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: var(--text-color);
+      }
+      .search-bar {
+        width: 90%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid var(--chat-input-border);
+        border-radius: 25px;
+        outline: none;
+        font-size: 16px;
+        background: var(--sidebar-background);
+        color: var(--text-color);
+      }
+      .user-list {
+        list-style: none;
+        padding: 0;
+      }
+      .user-list li {
+        padding: 10px;
+        cursor: pointer;
+        border-bottom: 1px solid var(--chat-input-border);
+        display: flex;
+        align-items: center;
+        transition: background 0.3s ease;
+      }
+      .user-list li:hover {
+        background: var(--user-list-hover);
+      }
+      .user-list li.selected {
+        background: var(--selected-user-background);
+      }
+      .user-list li img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+      }
+      .user-list li span {
+        font-size: 16px;
+        color: var(--text-color);
+      }
+      .user-list li .unread-indicator {
+        width: 10px;
+        height: 10px;
+        background: #ff5722;
+        border-radius: 50%;
+        margin-left: auto;
+        display: none;
+      }
+      .user-list li.has-unread .unread-indicator {
+        display: block;
+      }
+      .chat-window {
+        width: 75%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background: var(--sidebar-background);
+      }
+      .chat-header {
+        font-size: 20px;
+        font-weight: bold;
+        padding: 15px;
+        background: var(--chat-header-background);
+        color: var(--text-color);
+        text-align: center;
+        border-bottom: 1px solid var(--chat-input-border);
+        box-shadow: var(--chat-header-shadow);
+      }
+      .messages {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 20px;
+        background: var(--background-color);
+      }
+      .message {
+        padding: 10px 15px;
+        margin: 10px 0;
+        border-radius: 15px;
+        max-width: 60%;
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        animation: fadeIn 0.3s ease;
+      }
+      .message.sent {
+        background: var(--message-sent-background);
+        color: white;
+        margin-left: auto;
+      }
+      .message.received {
+        background: var(--message-received-background);
+        color: var(--text-color);
+        margin-right: auto;
+        border: 1px solid var(--message-received-border);
+      }
+      .message .timestamp {
+        font-size: 12px;
+        color: #777;
+        margin-left: 10px;
+        white-space: nowrap;
+      }
+      .message .avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+      }
+      .message img,
+      .message video {
+        max-width: 100%;
+        border-radius: 10px;
+        margin-top: 5px;
+      }
+
+      .chat-input {
+        padding: 15px;
+        background: var(--chat-input-background);
+        border-top: 1px solid var(--chat-input-border);
+      }
+      .input-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--sidebar-background);
+        border-radius: 25px;
+        padding: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      textarea {
+        flex-grow: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 20px;
+        outline: none;
+        font-size: 16px;
+        background: transparent;
+        color: var(--text-color);
+        resize: none;
+        overflow-y: hidden;
+        max-height: 150px;
+      }
+      textarea::placeholder {
+        color: #999;
+      }
+      .media-upload-btn {
+        padding: 10px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .media-upload-btn:hover {
+        background: var(--user-list-hover);
+      }
+      .send-button {
+        padding: 10px;
+        border: none;
+        background: var(--message-sent-background);
+        color: white;
+        cursor: pointer;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
+      .send-button:hover {
+        background: #007acc;
+        transform: scale(1.1);
+      }
+      .theme-toggle {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        padding: 10px;
+        border: none;
+        background: var(--message-sent-background);
+        color: white;
+        cursor: pointer;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s ease;
+        z-index: 1000;
+      }
+      .theme-toggle:hover {
+        background: #007acc;
+      }
+
+      /* New styles for media preview */
+      .media-preview {
+        display: none;
+        margin-bottom: 10px;
+        position: relative;
+        max-width: 200px;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .media-preview img,
+      .media-preview video {
+        max-width: 100%;
+        border-radius: 10px;
+      }
+      .media-preview .remove-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      .media-preview .remove-btn:hover {
+        background: rgba(0, 0, 0, 0.7);
+      }
+
+      /* Notification Styles */
+      .notification {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        background: var(--message-sent-background);
+        color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        font-size: 16px;
+        font-weight: bold;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        transform: translateY(20px);
+        z-index: 1000;
+      }
+
+      .notification.show {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      body.dark-theme .notification {
+        background: var(--message-sent-background);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+    <script>
+      // Auto-resize textarea
+      function autoResize(textarea) {
+        textarea.style.height = "auto";
+        textarea.style.height = textarea.scrollHeight + "px";
+      }
+
+      let selectedGroup = null;
+      let lastSelectedGroup = null;
+      let lastMessageTimestamp = null;
+      const senderEmail =
+        localStorage.getItem("userEmail") || "{{ sender.email }}";
+      let refreshInterval = setInterval(fetchGroupMessages, 2000); // Define globally
+
+      // Function to show notification
+      function showNotification(message, duration = 3000) {
+        const notification = document.getElementById("notification");
+        notification.textContent = message;
+        notification.classList.add("show");
+        setTimeout(() => notification.classList.remove("show"), duration);
+      }
+
+      // Fetch group messages
+      async function fetchGroupMessages() {
+        console.log("Fetching messages for group:", selectedGroup);
+        if (!selectedGroup) {
+          console.log("No group selected, skipping fetch");
+          return;
+        }
+
+        try {
+          let response = await fetch(
+            `/get-group-messages/?group_id=${selectedGroup}`
+          );
+          console.log("Response status:", response.status);
+          if (!response.ok) throw new Error("Failed to fetch group messages");
+
+          let data = await response.json();
+          console.log("Fetched data:", data);
+          let messagesDiv = document.getElementById("messages");
+
+          if (selectedGroup !== lastSelectedGroup) {
+            messagesDiv.innerHTML = "";
+            lastSelectedGroup = selectedGroup;
+            lastMessageTimestamp = null;
+            console.log("Cleared messages, reset timestamp");
+          }
+
+          let newMessages = lastMessageTimestamp
+            ? data.messages.filter(
+                (msg) =>
+                  new Date(msg.timestamp) > new Date(lastMessageTimestamp)
+              )
+            : data.messages;
+          console.log("New messages to append:", newMessages);
+
+          newMessages.forEach((msg) => {
+            let messageDiv = document.createElement("div");
+            messageDiv.classList.add(
+              "message",
+              msg.sender === senderEmail ? "sent" : "received"
+            );
+
+            let avatar = document.createElement("img");
+            avatar.src =
+              "https://e7.pngegg.com/pngimages/798/436/png-clipart-computer-icons-user-profile-avatar-profile-heroes-black.png";
+            avatar.classList.add("avatar");
+            messageDiv.appendChild(avatar);
+
+            let contentDiv = document.createElement("div");
+            contentDiv.classList.add("message-content");
+
+            if (msg.text) {
+              let text = document.createElement("span");
+              text.innerText = `${msg.sender}: ${msg.text}`;
+              contentDiv.appendChild(text);
+            }
+
+            if (msg.media_url) {
+              let media =
+                msg.media_type === "mp4"
+                  ? document.createElement("video")
+                  : document.createElement("img");
+              media.src = msg.media_url;
+              if (msg.media_type === "mp4") media.controls = true;
+              contentDiv.appendChild(media);
+            }
+
+            messageDiv.appendChild(contentDiv);
+
+            let timestamp = document.createElement("span");
+            timestamp.classList.add("timestamp");
+            timestamp.innerText = new Date(msg.timestamp).toLocaleTimeString();
+            messageDiv.appendChild(timestamp);
+
+            // Removed status indicator code
+            messagesDiv.appendChild(messageDiv);
+          });
+
+          if (newMessages.length > 0) {
+            lastMessageTimestamp =
+              newMessages[newMessages.length - 1].timestamp;
+            console.log("Updated lastMessageTimestamp:", lastMessageTimestamp);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+          } else {
+            console.log("No new messages");
+          }
+        } catch (error) {
+          console.error("Fetch error:", error);
+          showNotification("Failed to load messages.", 3000);
+        }
+      }
+
+      // Select a group to chat with
+      function selectGroup(groupId, groupName) {
+        selectedGroup = groupId;
+        document.getElementById(
+          "chat-header"
+        ).innerText = `Group: ${groupName}`;
+        document.getElementById("groupInput").value = selectedGroup;
+
+        document.querySelectorAll(".user-list li").forEach((li) => {
+          li.classList.remove("selected");
+        });
+        event.currentTarget.classList.add("selected");
+
+        clearInterval(refreshInterval); // Clear existing interval
+        fetchGroupMessages(); // Fetch immediately
+        refreshInterval = setInterval(fetchGroupMessages, 2000); // Restart interval
+      }
+
+      // Send a group message
+      async function sendGroupMessage(event) {
+        event.preventDefault();
+
+        let text = document.getElementById("messageInput").value.trim();
+        let mediaFile = document.getElementById("mediaInput").files[0];
+        if (!text && !mediaFile) return;
+
+        const formData = new FormData();
+        formData.append("sender", senderEmail);
+        formData.append("group_id", selectedGroup);
+        if (text) formData.append("text", text);
+        if (mediaFile) formData.append("media", mediaFile);
+
+        try {
+          let response = await fetch("/send-group-message/", {
+            method: "POST",
+            body: formData,
+            headers: {
+              "X-CSRFToken": getCSRFToken(),
+            },
+          });
+
+          if (response.ok) {
+            document.getElementById("messageInput").value = "";
+            document.getElementById("mediaInput").value = "";
+            clearMediaPreview();
+            fetchGroupMessages();
+
+            let responseData = await response.json();
+            if (mediaFile) {
+              const fileType = mediaFile.type.startsWith("image/")
+                ? "Image"
+                : "Video";
+              showNotification(`${fileType} uploaded successfully!`, 3000);
+            } else {
+              showNotification("Message sent successfully!", 2000);
+            }
+          } else {
+            showNotification("Failed to send message.", 3000);
+          }
+        } catch (error) {
+          console.error("Network error:", error);
+          showNotification("Network error occurred.", 3000);
+        }
+      }
+
+      // Display media preview
+      function displayMediaPreview(file) {
+        const previewDiv = document.getElementById("mediaPreview");
+        previewDiv.innerHTML = "";
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const mediaElement = file.type.startsWith("image/")
+            ? document.createElement("img")
+            : document.createElement("video");
+          mediaElement.src = e.target.result;
+          if (file.type.startsWith("video/")) mediaElement.controls = true;
+
+          const removeBtn = document.createElement("button");
+          removeBtn.classList.add("remove-btn");
+          removeBtn.innerText = "×";
+          removeBtn.onclick = clearMediaPreview;
+
+          previewDiv.appendChild(mediaElement);
+          previewDiv.appendChild(removeBtn);
+          previewDiv.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // Clear media preview
+      function clearMediaPreview() {
+        const previewDiv = document.getElementById("mediaPreview");
+        previewDiv.innerHTML = "";
+        previewDiv.style.display = "none";
+        document.getElementById("mediaInput").value = "";
+      }
+
+      // Event listener for media input
+      document.getElementById("mediaInput").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) displayMediaPreview(file);
+        else clearMediaPreview();
+      });
+
+      function getCSRFToken() {
+        return document.querySelector("[name=csrfmiddlewaretoken]").value;
+      }
+
+      // Toggle theme
+      function toggleTheme() {
+        document.body.classList.toggle("dark-theme");
+      }
+
+      // Auto-select first group on load (optional)
+      window.onload = function () {
+        const firstGroup = document.querySelector(".user-list li");
+        if (firstGroup) {
+          const groupId = firstGroup
+            .getAttribute("onclick")
+            .match(/'([^']+)'/)[1];
+          const groupName = firstGroup.querySelector("span").innerText;
+          selectGroup(groupId, groupName);
+        }
+      };
+    </script>
+  </head>
+  <body>
+    <div id="notification" class="notification"></div>
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        width="24"
+        height="24"
+      >
+        <path
+          fill="currentColor"
+          d="M12 18a6 6 0 110-12 6 6 0 010 12zm0-2a4 4 0 100-8 4 4 0 000 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121z"
+        />
+      </svg>
+    </button>
+    <div class="sidebar">
+      <h2>Groups</h2>
+      <a href="/chat/" class="group-chat-link">Private Chats</a>
+      <ul id="user-list" class="user-list">
+        {% for group in groups %}
+        <li onclick="selectGroup('{{ group.id }}', '{{ group.name }}')">
+          <span>{{ group.name }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="chat-window">
+      <div id="chat-header" class="chat-header">Select a group to chat</div>
+      <div id="messages" class="messages"></div>
+      <div class="chat-input">
+        <div id="mediaPreview" class="media-preview"></div>
+        <form onsubmit="sendGroupMessage(event)" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="hidden" id="groupInput" value="" />
+          <div class="input-container">
+            <textarea
+              id="messageInput"
+              name="text"
+              placeholder="Type a message..."
+              rows="1"
+              oninput="autoResize(this)"
+            ></textarea>
+            <label class="media-upload-btn">
+              <input
+                type="file"
+                id="mediaInput"
+                name="media"
+                accept="image/*,video/*"
+                style="display: none"
+              />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+              >
+                <path
+                  fill="currentColor"
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"
+                />
+              </svg>
+            </label>
+            <button type="submit" class="send-button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+              >
+                <path
+                  fill="currentColor"
+                  d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"
+                />
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

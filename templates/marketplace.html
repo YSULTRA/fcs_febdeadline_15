@@ -1,0 +1,534 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>P2P Marketplace</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: #f4f7fa;
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+      }
+
+      /* Header */
+      header {
+        background: #1e40af;
+        color: white;
+        padding: 15px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        margin-bottom: 30px;
+      }
+
+      header h1 {
+        font-size: 24px;
+        font-weight: 600;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        margin-left: 20px;
+        font-size: 16px;
+        transition: color 0.3s;
+      }
+
+      .nav-links a:hover {
+        color: #facc15;
+      }
+
+      /* Main Container */
+      .marketplace-container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Wallet Section */
+      .wallet-section {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+
+      .wallet-section h3 {
+        font-size: 20px;
+        color: #1e40af;
+      }
+
+      .wallet-section span#balance {
+        font-weight: 600;
+        color: #10b981;
+      }
+
+      .wallet-section input {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-right: 10px;
+        width: 120px;
+      }
+
+      .wallet-section button {
+        padding: 10px 20px;
+        background: #10b981;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .wallet-section button:hover {
+        background: #059669;
+      }
+
+      /* List Product Section */
+      .list-product-section {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      .list-product-section h3 {
+        font-size: 20px;
+        color: #1e40af;
+        margin-bottom: 15px;
+      }
+
+      .list-product-section input,
+      .list-product-section textarea {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      .list-product-section textarea {
+        height: 80px;
+        resize: vertical;
+      }
+
+      .list-product-section .image-input {
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      .list-product-section button {
+        padding: 12px 20px;
+        background: #6366f1;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .list-product-section button:hover {
+        background: #3b82f6;
+      }
+
+      /* Product Listings */
+      .products-section {
+        margin-bottom: 30px;
+      }
+
+      .products-section h3 {
+        font-size: 20px;
+        color: #1e40af;
+        margin-bottom: 20px;
+      }
+
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .product-card {
+        background: white;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .product-card img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+        background: #eee; /* Placeholder color if no image */
+      }
+
+      .product-card h4 {
+        font-size: 16px;
+        margin: 10px 0;
+        color: #333;
+      }
+
+      .product-card p {
+        font-size: 14px;
+        color: #666;
+        margin: 5px 0;
+      }
+
+      .product-card .price {
+        font-size: 18px;
+        font-weight: 600;
+        color: #10b981;
+      }
+
+      .product-card .status {
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .product-card.sold .status {
+        color: #ef4444; /* Red for sold */
+      }
+
+      .product-card.available .status {
+        color: #10b981; /* Green for available */
+      }
+
+      .product-card button {
+        width: 100%;
+        padding: 10px;
+        background: #facc15;
+        color: #333;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s;
+        margin-top: 10px;
+      }
+
+      .product-card button:hover {
+        background: #eab308;
+      }
+
+      /* Notifications */
+      .notification,
+      .error {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 8px;
+        color: white;
+        font-size: 14px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .notification.active,
+      .error.active {
+        opacity: 1;
+      }
+
+      .notification {
+        background: #10b981;
+      }
+
+      .error {
+        background: #ef4444;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>P2P Marketplace</h1>
+      <div class="nav-links">
+        <a href="{% url 'user-profile' %}">Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+      </div>
+    </header>
+
+    <div class="marketplace-container">
+      <!-- Wallet Balance -->
+      <div class="wallet-section">
+        <h3>Wallet Balance: <span id="balance">$0.00</span></h3>
+        <div>
+          <input
+            type="number"
+            id="topup-amount"
+            placeholder="Amount"
+            step="0.01"
+            min="0"
+          />
+          <button onclick="topupWallet()">Top-up Wallet</button>
+        </div>
+      </div>
+
+      <!-- List Product -->
+      <div class="list-product-section">
+        <h3>List a Product</h3>
+        <input type="text" id="product-title" placeholder="Product Title" />
+        <textarea id="product-description" placeholder="Description"></textarea>
+        <input
+          type="number"
+          id="product-price"
+          placeholder="Price"
+          step="0.01"
+          min="0"
+        />
+        <input
+          type="file"
+          id="product-image"
+          class="image-input"
+          accept="image/png,image/jpeg,image/jpg"
+          placeholder="Upload Product Image"
+        />
+        <button onclick="listProduct()">List Product</button>
+      </div>
+
+      <!-- Your Listed Products -->
+      <div class="products-section">
+        <h3>Your Listed Products</h3>
+        <div class="product-grid" id="your-product-list"></div>
+      </div>
+
+      <!-- Available Products -->
+      <div class="products-section">
+        <h3>Available Products</h3>
+        <div class="product-grid" id="product-list"></div>
+      </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+    <div id="error" class="error"></div>
+
+    <script>
+      const csrfToken = "{{ csrf_token }}";
+
+      function showNotification(message, isError = false) {
+        const elem = isError
+          ? document.getElementById("error")
+          : document.getElementById("notification");
+        elem.textContent = message;
+        elem.classList.add("active");
+        setTimeout(() => {
+          elem.classList.remove("active");
+          elem.textContent = "";
+        }, 3000);
+      }
+
+      async function fetchWalletBalance() {
+        const response = await fetch("/wallet-balance/", {
+          method: "GET",
+          credentials: "include",
+        });
+        const data = await response.json();
+        if (response.ok) {
+          document.getElementById("balance").textContent = `$${data.balance}`;
+        } else {
+          showNotification(data.error, true);
+        }
+      }
+
+      async function listProduct() {
+        const title = document.getElementById("product-title").value;
+        const description = document.getElementById(
+          "product-description"
+        ).value;
+        const price = document.getElementById("product-price").value;
+        const imageInput = document.getElementById("product-image");
+        const imageFile = imageInput.files[0];
+
+        if (!title || !price) {
+          showNotification("Title and price are required", true);
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("description", description);
+        formData.append("price", price);
+        if (imageFile) {
+          formData.append("image", imageFile);
+        }
+
+        const response = await fetch("/list-product/", {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": csrfToken,
+          },
+          body: formData,
+          credentials: "include",
+        });
+        const data = await response.json();
+        if (response.ok) {
+          showNotification(data.message);
+          document.getElementById("product-title").value = "";
+          document.getElementById("product-description").value = "";
+          document.getElementById("product-price").value = "";
+          imageInput.value = ""; // Clear file input
+          fetchYourProducts();
+          fetchProducts();
+        } else {
+          showNotification(data.error, true);
+        }
+      }
+
+      async function fetchProducts() {
+        const response = await fetch("/get-products/", {
+          method: "GET",
+          credentials: "include",
+        });
+        const data = await response.json();
+        if (response.ok) {
+          const productList = document.getElementById("product-list");
+          productList.innerHTML = "";
+          data.products.forEach((product) => {
+            const div = document.createElement("div");
+            div.className = "product-card";
+            const imageSrc = product.image
+              ? product.image
+              : "https://via.placeholder.com/150";
+            div.innerHTML = `
+              <img src="${imageSrc}" alt="${
+              product.title
+            }" onerror="this.src='https://via.placeholder.com/150'; this.onerror=null;">
+              <h4>${product.title}</h4>
+              <p>${product.description || "No description available"}</p>
+              <p class="price">$${product.price}</p>
+              <p>Seller: ${product.seller}</p>
+              <button onclick="buyProduct(${product.id})">Buy Now</button>
+            `;
+            productList.appendChild(div);
+          });
+        } else {
+          showNotification(data.error, true);
+        }
+      }
+
+      async function fetchYourProducts() {
+        const response = await fetch("/get-your-products/", {
+          method: "GET",
+          credentials: "include",
+        });
+        const data = await response.json();
+        if (response.ok) {
+          const yourProductList = document.getElementById("your-product-list");
+          yourProductList.innerHTML = "";
+          data.products.forEach((product) => {
+            const div = document.createElement("div");
+            div.className = `product-card ${
+              product.is_sold ? "sold" : "available"
+            }`;
+            // Ensure imageSrc is a valid URL or fallback
+            const imageSrc = product.image
+              ? product.image.startsWith("http")
+                ? product.image
+                : `http://127.0.0.1:8000${product.image}`
+              : "https://via.placeholder.com/150";
+            div.innerHTML = `
+              <img src="${imageSrc}" alt="${
+              product.title
+            }" onerror="this.src='https://via.placeholder.com/150'; this.onerror=null;">
+              <h4>${product.title}</h4>
+              <p>${product.description || "No description available"}</p>
+              <p class="price">$${product.price}</p>
+              <p class="status">Status: ${
+                product.is_sold ? "Sold" : "Available"
+              }</p>
+            `;
+            yourProductList.appendChild(div);
+          });
+        } else {
+          showNotification(data.error, true);
+        }
+      }
+
+      async function buyProduct(productId) {
+        if (confirm("Are you sure you want to buy this product?")) {
+          const response = await fetch("/buy-product/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrfToken,
+            },
+            body: JSON.stringify({ product_id: productId }),
+            credentials: "include",
+          });
+          const data = await response.json();
+          if (response.ok) {
+            showNotification(data.message);
+            fetchWalletBalance();
+            fetchProducts();
+            fetchYourProducts();
+          } else {
+            showNotification(data.error, true);
+          }
+        }
+      }
+
+      async function topupWallet() {
+        const amount = document.getElementById("topup-amount").value;
+        if (!amount || amount <= 0) {
+          showNotification("Please enter a valid amount", true);
+          return;
+        }
+        const response = await fetch("/topup-wallet/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+          },
+          body: JSON.stringify({ amount }),
+          credentials: "include",
+        });
+        const data = await response.json();
+        if (response.ok) {
+          showNotification(data.message);
+          document.getElementById("topup-amount").value = "";
+          fetchWalletBalance();
+        } else {
+          showNotification(data.error, true);
+        }
+      }
+
+      // Initial load
+      fetchWalletBalance();
+      fetchProducts();
+      fetchYourProducts();
+    </script>
+  </body>
+</html>
